@@ -1,12 +1,27 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NonNull;
 
 /**
  * Film.
  */
-@Getter
-@Setter
+@Data
+@Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Film {
+
+    private long id;
+
+    @NonNull
+    private String name;
+
+    @NonNull
+    private String description;
+
+    private String releaseDate;
+
+    private String duration;
 }
