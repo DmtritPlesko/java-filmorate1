@@ -12,9 +12,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-@RequestMapping("/users")
-@RestController
 @Slf4j
+@RestController
+@RequestMapping("/users")
 public class UserController {
 
     private Map<Long, User> userMap = new HashMap<>();
@@ -95,7 +95,7 @@ public class UserController {
             log.error("Логин должен быть без пробелов");
             throw new ValidationException("Логин должен быть без пробелов");
 
-        } else if (LocalDate.parse(user.getBirthday(), formatter).isAfter(LocalDate.now())) {
+        } else if (user.getBirthday().isAfter(LocalDate.now())) {
             log.error("Дата рождения не может быть в будущем.");
             throw new ValidationException("Дата рождения не может быть в будущем.");
         }

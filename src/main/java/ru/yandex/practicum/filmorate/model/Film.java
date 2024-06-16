@@ -5,6 +5,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 
+import java.time.Duration;
+import java.time.LocalDate;
+
 /**
  * Film.
  */
@@ -21,7 +24,7 @@ public class Film {
     @NonNull
     private String description;
 
-    private String releaseDate;
+    private LocalDate releaseDate;
 
-    private String duration;
+    private Duration duration;
 }

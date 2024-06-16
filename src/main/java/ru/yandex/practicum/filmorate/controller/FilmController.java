@@ -11,9 +11,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-@RequestMapping("/films")
-@RestController
 @Slf4j
+@RestController
+@RequestMapping("/films")
 public class FilmController {
 
     private Map<Long, Film> filmMap = new HashMap<>();
@@ -73,11 +73,10 @@ public class FilmController {
         } else if (film.getDescription().length() > 200) {
             log.error("Максимальная длина описания — 200 символов");
             throw new ValidationException("Максимальная длина описания — 200 символов");
-        } else if (LocalDate.parse(film.getReleaseDate(), formatter)
-                .isBefore(LocalDate.parse("28.12.1895", formatter))) {
+        } else if ((film.getReleaseDate().isBefore(LocalDate.parse("28.12.1895", formatter)))) {
             log.error("Дата релиза — не раньше 28 декабря 1895 года");
             throw new ValidationException("Дата релиза — не раньше 28 декабря 1895 года");
-        } else if (Integer.parseInt(film.getDuration()) < 0) {
+        } else if (film.getDuration().getSeconds()<0) {
             log.error("Продолжительность не может быть отрицательной");
             throw new ValidationException("Продолжительность не может быть отрицательной");
         }

@@ -1,30 +1,34 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.yandex.practicum.filmorate.model.Film;
 
-import static org.junit.Assert.assertNotNull;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 import static org.junit.jupiter.api.Assertions.*;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(MockitoExtension.class)
 @SpringBootTest
 class FilmControllerTest {
     @Autowired
     private FilmController controller;
+    private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+
 
     @Test
     public void addUser() {
         Film film = Film.builder()
                 .description("Какое то описание")
                 .name("Silent Hill")
-                .releaseDate("12.10.1985")
-                .duration("90")
+                .releaseDate(LocalDate.parse("12.05.2003", formatter))
+                .duration(Duration.ofMinutes(90))
                 .build();
 
 

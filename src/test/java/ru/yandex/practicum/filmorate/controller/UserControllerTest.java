@@ -1,20 +1,24 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.yandex.practicum.filmorate.model.User;
 
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 import static org.junit.jupiter.api.Assertions.*;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(MockitoExtension.class)
 @SpringBootTest
 class UserControllerTest {
+    private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+
 
     @Autowired
     private UserController controller;
@@ -24,7 +28,7 @@ class UserControllerTest {
         User user = User.builder()
                 .login("Dima")
                 .email("yandex@mail.ru")
-                .birthday("12.05.2010")
+                .birthday(LocalDate.parse("12.05.2003", formatter))
                 .build();
 
         controller.addNewUser(user);
@@ -42,7 +46,7 @@ class UserControllerTest {
                 .name("Dima")
                 .email("dimka@icloud.com")
                 .login("Hello")
-                .birthday("12.05.2003")
+                .birthday(LocalDate.parse("12.05.2003", formatter))
                 .build();
 
         controller.update(user);

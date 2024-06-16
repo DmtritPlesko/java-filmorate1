@@ -6,6 +6,8 @@ import lombok.NonNull;
 import lombok.ToString;
 import lombok.EqualsAndHashCode;
 
+import java.time.LocalDate;
+
 @Data
 @Builder
 @ToString
@@ -24,6 +26,6 @@ public class User {
 
     private String name;
 
-    private String birthday;
+    private LocalDate birthday;
 
 }
