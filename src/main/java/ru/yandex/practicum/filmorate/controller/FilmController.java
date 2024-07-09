@@ -1,85 +1,60 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exeption.ValidationException;
-import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.dto.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 @Slf4j
 @RestController
 @RequestMapping("/films")
 public class FilmController {
+    private FilmService filmService;
 
-    private Map<Long, Film> filmMap = new HashMap<>();
-    private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+    @Autowired
+    public FilmController (FilmService filmService) {
+        this.filmService = filmService;
+    }
 
     @PostMapping
-    public void addNewFilm(@RequestBody Film film) {
+    public void addFilm(@RequestBody Film film) {
+        filmService.addNewFilm(film);
+    }
 
+    @GetMapping
+    public Collection<Film> allFilm() {
+        return filmService.allFilm();
+    }
 
-        checkValidation(film);
-
-        film.setId(getNextId());
-        filmMap.put(film.getId(), film);
-
-        log.info("Фильм {} добалвен в коллекцию", film.getName());
+    @GetMapping("/{id}")
+    public Film getFilmByID(@PathVariable Long id) {
+        return filmService.getFilmByID(id);
     }
 
     @PutMapping
     public void update(@RequestBody Film film) {
-
-        if (!filmMap.containsKey(film.getId())) {
-            log.error("Фильм с идентефикатором : {}", film.getId() + " не найден");
-            return;
-        }
-
-        try {
-            checkValidation(film);
-        } catch (ValidationException e) {
-            log.error("Ошибка валидации: {} ", e.getMessage());
-            return;
-        }
-
-        filmMap.put(film.getId(), film);
-        log.info("Данные о фильм {} обновлены ", film.getName());
+        filmService.update(film);
     }
 
-
-    @GetMapping
-    public Collection<Film> allFilms() {
-        log.info("Всего фильмов: {}", filmMap.values().size());
-        return filmMap.values();
+    @GetMapping("/popular")
+    public List<Film> getBestFilms(@RequestParam(defaultValue = "10") int count) {
+        return filmService.getPopularFilm(count);
     }
 
-    private long getNextId() {
-        long currentMaxId = filmMap.keySet()
-                .stream()
-                .mapToLong(id -> id)
-                .max()
-                .orElse(0);
-        return ++currentMaxId;
+    @PutMapping("/{id}/like/{userId}")
+    public void takeLike(@PathVariable("id") Long filmId,
+                         @PathVariable Long userId) {
+        filmService.takeLike(filmId, userId);
     }
 
-    private void checkValidation(Film film) throws ValidationException {
-        if (film.getName().isBlank()) {
-            log.error("Название не может быть пустым");
-            throw new ValidationException("Название не может быть пустым");
-        } else if (film.getDescription().length() > 200) {
-            log.error("Максимальная длина описания — 200 символов");
-            throw new ValidationException("Максимальная длина описания — 200 символов");
-        } else if ((film.getReleaseDate().isBefore(LocalDate.parse("28.12.1895", formatter)))) {
-            log.error("Дата релиза — не раньше 28 декабря 1895 года");
-            throw new ValidationException("Дата релиза — не раньше 28 декабря 1895 года");
-        } else if (film.getDuration().getSeconds()<0) {
-            log.error("Продолжительность не может быть отрицательной");
-            throw new ValidationException("Продолжительность не может быть отрицательной");
-        }
+    @DeleteMapping("/{id}/like/{userId}")
+    public void deleteLike(@PathVariable("id") Long filmId,
+                           @PathVariable Long userId) {
+        filmService.deleteLike(filmId, userId);
 
     }
 }

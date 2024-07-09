@@ -5,8 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
-import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.dto.Film;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -17,9 +16,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest
 class FilmControllerTest {
+    private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
     @Autowired
     private FilmController controller;
-    private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
 
     @Test
@@ -32,12 +31,12 @@ class FilmControllerTest {
                 .build();
 
 
-        controller.addNewFilm(film);
+        controller.addFilm(film);
         assertEquals(1, film.getId());
     }
 
     @Test
     public void getAllFilms() {
-        assertNotNull(controller.allFilms());
+        assertNotNull(controller.allFilm());
     }
 }

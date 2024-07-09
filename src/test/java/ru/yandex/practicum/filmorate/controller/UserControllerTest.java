@@ -5,8 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
-import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.dto.User;
 
 
 import java.time.LocalDate;
@@ -18,8 +17,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 class UserControllerTest {
     private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-
-
     @Autowired
     private UserController controller;
 
@@ -50,14 +47,14 @@ class UserControllerTest {
                 .build();
 
         controller.update(user);
-        assertNotNull(controller.allUser());
+        assertNotNull(controller.allUsers());
 
         assertNotEquals(user, user1);
     }
 
     @Test
     public void getAllUsers() {
-        assertNotNull(controller.allUser());
+        assertNotNull(controller.allUsers());
     }
 
 }
