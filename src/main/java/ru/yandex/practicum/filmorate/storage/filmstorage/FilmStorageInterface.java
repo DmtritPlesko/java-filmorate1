@@ -6,9 +6,9 @@ import java.util.*;
 
 public interface FilmStorageInterface {
 
-    void addNewFilm(Film film);
+    Film addNewFilm(Film film);
 
-    void update(Film film);
+    Film update(Film film);
 
     Film getFilmByID(Long id);
 

@@ -9,9 +9,9 @@ import java.util.Set;
 
 public interface UserStorageInterface {
 
-    void createUser(User user);
+    User createUser(User user);
 
-    void update(User user);
+    User update(User user);
 
     Collection<User> allUser();
 

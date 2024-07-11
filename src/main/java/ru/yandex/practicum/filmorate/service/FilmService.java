@@ -1,21 +1,20 @@
 package ru.yandex.practicum.filmorate.service;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.dto.User;
 import ru.yandex.practicum.filmorate.exeption.NotFoundException;
 import ru.yandex.practicum.filmorate.exeption.ValidationException;
 import ru.yandex.practicum.filmorate.dto.Film;
 import ru.yandex.practicum.filmorate.storage.filmstorage.FilmStorageInterface;
-import ru.yandex.practicum.filmorate.storage.filmstorage.InMemoryFilmStorage;
-import ru.yandex.practicum.filmorate.storage.userstorage.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.storage.userstorage.UserStorageInterface;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -31,19 +30,22 @@ public class FilmService {
         this.userStorage = userStorage;
     }
 
-    public void addNewFilm(Film film) {
+    public Film addNewFilm(Film film) {
         checkValidation(film);
-        filmStorage.addNewFilm(film);
+        return filmStorage.addNewFilm(film);
     }
 
-    public void update(Film film) {
-        if (filmStorage.getFilmByID(film.getId()) == null) {
-            log.error("Фильм с идентефикатором : {}", film.getId() + " не найден");
-            return;
+    public Film update(Film newFilm) {
+        Film film = filmStorage.getFilmByID(newFilm.getId());
+
+        if (film == null) {
+            log.error("Фильм с id = " + film.getId() + " не найден");
+            throw new NotFoundException("Фильм с id = " + film.getId() + " не найден");
         }
+
         checkValidation(film);
 
-        filmStorage.update(film);
+        return filmStorage.update(film);
     }
 
     public Collection<Film> allFilm() {
@@ -51,28 +53,34 @@ public class FilmService {
     }
 
     public Film getFilmByID(Long filmId) {
-        checkContainsById(filmId);
 
         return filmStorage.getFilmByID(filmId);
     }
 
     public void takeLike(Long id, Long userId) {
-        if (userStorage.getUserById(id) == null) {
-            throw new NotFoundException("Пользователь с id = " + id + " не существует");
+
+        User user = userStorage.getUserById(userId);
+
+        Set<Long> takeUserLike = filmStorage.getFilmByID(id).getLikes();
+
+        if(takeUserLike.contains(userId)) {
+            log.error("Пользователь с id = {} уже поставил лайк",userId);
+            throw new IllegalArgumentException("Пользователь с id = " + userId + " уже поставил лайк");
         }
 
-        checkContainsById(id);
-
+        log.info("Пользователь с id = {} лайкнул фильм с id = {}",userId,id);
         filmStorage.takeLike(id, userId);
     }
 
     public void deleteLike(Long id, Long userId) {
+        Set<Long> userLikes = filmStorage.getFilmByID(id).getLikes();
 
-        if (userStorage.getUserById(id) == null) {
-            throw new NotFoundException("Пользователь с id = " + id + " не существует");
+        if(!userLikes.contains(userId)) {
+            log.error("ОЙ! пользотватель с id = {} не лайкал фильм с id = {}",userId,id);
+            throw new NotFoundException("ОЙ! пользотватель с id = " + userId + " не лайкал фильм с id = "+ id );
         }
-        checkContainsById(id);
 
+        log.info("Пользовтаель с id = {} удалил свой лайк с фильма под id = {} ",userId,id);
         filmStorage.deleteLike(id, userId);
     }
 
@@ -84,14 +92,7 @@ public class FilmService {
                 .collect(Collectors.toList());
     }
 
-    private void checkContainsById(Long filmId) {
-
-        if (filmStorage.getFilmByID(filmId) == null) {
-            throw new NotFoundException("Фильм с id = " + filmId + " не найден");
-        }
-    }
-
-    private void checkValidation(Film film) throws ValidationException {
+    private void checkValidation(Film film){
         if (film.getName().isBlank()) {
             log.error("Название не может быть пустым");
             throw new ValidationException("Название не может быть пустым");
