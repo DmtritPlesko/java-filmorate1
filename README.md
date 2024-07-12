@@ -1,3 +1,3 @@
 # java-filmorate
 Template repository for Filmorate project.
-![Alt text](https://github.com/DmtritPlesko/java-filmorate/blob/ER-diagramma/Untitled.png)
+[ER-diagramma](https://dbdiagram.io/d/66911cb89939893daec47f5c)
