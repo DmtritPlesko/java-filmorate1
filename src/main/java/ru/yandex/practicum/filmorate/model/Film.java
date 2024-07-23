@@ -1,9 +1,9 @@
-package ru.yandex.practicum.filmorate.dto;
+package ru.yandex.practicum.filmorate.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.springframework.beans.factory.annotation.Autowired;
+import ru.yandex.practicum.filmorate.enums.Rating;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -32,6 +32,9 @@ public class Film {
 
     Set<Long> likes;
 
+    Set<String> genres;
+
+    Rating rating;
 }
 
 

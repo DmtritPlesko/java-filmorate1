@@ -1,6 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.filmstorage;
 
-import ru.yandex.practicum.filmorate.dto.Film;
+import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.*;
 

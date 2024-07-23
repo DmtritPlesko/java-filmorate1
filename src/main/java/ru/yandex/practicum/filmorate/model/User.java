@@ -1,12 +1,12 @@
-package ru.yandex.practicum.filmorate.dto;
+package ru.yandex.practicum.filmorate.model;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.springframework.beans.factory.annotation.Autowired;
+import ru.yandex.practicum.filmorate.enums.Status;
 
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.Stack;
 
 
 @Data
@@ -24,8 +24,14 @@ public class User {
 
     String name;
 
+    int years;
+
+    String password;
+
     LocalDate birthday;
 
     Set<Long> friends;
+
+    Status friend;
 
 }

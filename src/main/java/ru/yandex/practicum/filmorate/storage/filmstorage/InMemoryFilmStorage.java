@@ -2,7 +2,7 @@ package ru.yandex.practicum.filmorate.storage.filmstorage;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.dto.Film;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.exeption.NotFoundException;
 
 import java.util.*;
@@ -17,6 +17,7 @@ public class InMemoryFilmStorage implements FilmStorageInterface {
     public Film addNewFilm(Film film) {
         film.setId(getNextId());
         film.setLikes(new HashSet<>());
+        film.setGenres(new HashSet<>());
         filmMap.put(film.getId(), film);
         log.info("Фильм {} добалвен в коллекцию", film.getName());
         return film;
