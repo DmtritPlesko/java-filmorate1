@@ -14,7 +14,7 @@ public class UserDbController {
     private UserDbService userDbService;
 
     @Autowired
-    public UserDbController (UserDbService userDbService) {
+    public UserDbController(UserDbService userDbService) {
         this.userDbService = userDbService;
     }
 
@@ -29,7 +29,7 @@ public class UserDbController {
     }
 
     @PostMapping
-    public User addNewUser (@RequestBody User user) {
+    public User addNewUser(@RequestBody User user) {
         return userDbService.addUser(user);
     }
 
@@ -39,20 +39,20 @@ public class UserDbController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteUser (@PathVariable("id") Long id) {
+    public void deleteUser(@PathVariable("id") Long id) {
         userDbService.deleteUser(id);
     }
 
     @PutMapping("/{id}/friends/{friendsId}")
     public void addFriend(@PathVariable("id") Long userId,
                           @PathVariable("friendsId") Long friendsId) {
-        userDbService.addNewFriend(userId,friendsId);
+        userDbService.addNewFriend(userId, friendsId);
     }
 
     @DeleteMapping("/{id}/friends/{friendsId}")
-    public void deleteFriend (@PathVariable("id") Long userId,
-                              @PathVariable("friendsId") Long friendsId) {
-        userDbService.deleteFriendFromUser(userId,friendsId);
+    public void deleteFriend(@PathVariable("id") Long userId,
+                             @PathVariable("friendsId") Long friendsId) {
+        userDbService.deleteFriendFromUser(userId, friendsId);
     }
 
     @GetMapping("/{id}/friends")
@@ -61,8 +61,8 @@ public class UserDbController {
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
-    public List<User> getMutualFriend (@PathVariable("id") Long userId,
-                                       @PathVariable("otherId") Long friendId) {
-        return userDbService.getMutualFriend(userId,friendId);
+    public List<User> getMutualFriend(@PathVariable("id") Long userId,
+                                      @PathVariable("otherId") Long friendId) {
+        return userDbService.getMutualFriend(userId, friendId);
     }
 }

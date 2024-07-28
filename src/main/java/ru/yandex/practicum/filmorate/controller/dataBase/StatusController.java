@@ -16,7 +16,7 @@ public class StatusController {
     private StatusService statusService;
 
     @Autowired
-    public StatusController (StatusService statusService) {
+    public StatusController(StatusService statusService) {
         this.statusService = statusService;
     }
 
@@ -26,7 +26,7 @@ public class StatusController {
     }
 
     @GetMapping
-    public List<Status> getAllStatus () {
+    public List<Status> getAllStatus() {
         return statusService.getAllStatus();
     }
 }

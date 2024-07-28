@@ -16,17 +16,17 @@ public class RatingController {
     private RatingService ratingService;
 
     @Autowired
-    public RatingController (RatingService ratingService) {
+    public RatingController(RatingService ratingService) {
         this.ratingService = ratingService;
     }
 
     @GetMapping("/{id}")
-    public Mpa getRatingByID (@PathVariable("id")Long id) {
+    public Mpa getRatingByID(@PathVariable("id") Long id) {
         return ratingService.getRatingById(id);
     }
 
     @GetMapping
-    public List<Mpa> getAllRating () {
+    public List<Mpa> getAllRating() {
         return ratingService.getAllRating();
     }
 }

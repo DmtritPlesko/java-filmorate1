@@ -8,6 +8,6 @@ import java.sql.SQLException;
 public class StatusMapper {
     public static Status mapRow(ResultSet rs, int rowMap) throws SQLException {
         return new Status(rs.getLong("id"),
-                          rs.getString("status_name"));
+                rs.getString("status_name"));
     }
 }

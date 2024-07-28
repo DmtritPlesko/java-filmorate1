@@ -30,8 +30,8 @@ create table if not EXISTS films (
 );
 
 CREATE TABLE IF NOT EXISTS filmgenres (
-    film_id INTEGER NOT NULL,
-    genre_id INTEGER NOT NULL,
+    film_id INTEGER NOT NULL REFERENCES films (film_id),
+    genre_id INTEGER not null REFERENCES genres (genre_id) ,
      CONSTRAINT film_genres_pk PRIMARY KEY (film_id, genre_id),
      CONSTRAINT fk_film FOREIGN KEY (film_id) REFERENCES films (film_id) ON DELETE CASCADE,
      CONSTRAINT fk_genre FOREIGN KEY (genre_id) REFERENCES genres (genre_id) ON DELETE CASCADE

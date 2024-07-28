@@ -20,38 +20,39 @@ public class UserDbService {
     private UserStorageInterface userStorage;
 
     @Autowired
-    public UserDbService (UserDbStorage userStorage) {
+    public UserDbService(UserDbStorage userStorage) {
         this.userStorage = userStorage;
     }
+
     //create
-    public User addUser (User user) {
+    public User addUser(User user) {
         validation(user);
         return userStorage.createUser(user);
     }
 
-    public void addNewFriend(Long userId,Long friendId) {
-        userStorage.addNewFriend(userId,friendId);
+    public void addNewFriend(Long userId, Long friendId) {
+        userStorage.addNewFriend(userId, friendId);
     }
 
     //read
-    public User getUserById (Long id) {
-       return userStorage.getUserById(id);
+    public User getUserById(Long id) {
+        return userStorage.getUserById(id);
     }
 
-    public List<User> getAllUser () {
+    public List<User> getAllUser() {
         return (List<User>) userStorage.allUser();
     }
 
-    public Set<User> allFriend (Long userId) {
+    public Set<User> allFriend(Long userId) {
         return userStorage.allFriend(userId);
     }
 
-    public List<User> getMutualFriend (Long userId, Long friendId) {
-        return userStorage.getMutualFriends(userId,friendId);
+    public List<User> getMutualFriend(Long userId, Long friendId) {
+        return userStorage.getMutualFriends(userId, friendId);
     }
 
     //update
-    public User updateUser (User user) {
+    public User updateUser(User user) {
         validation(user);
         return userStorage.update(user);
     }
@@ -61,8 +62,8 @@ public class UserDbService {
         userStorage.deleteUser(id);
     }
 
-    public void deleteFriendFromUser (Long userId, Long friendId) {
-        userStorage.deleteFriend(userId,friendId);
+    public void deleteFriendFromUser(Long userId, Long friendId) {
+        userStorage.deleteFriend(userId, friendId);
     }
 
     private void validation(User user) {

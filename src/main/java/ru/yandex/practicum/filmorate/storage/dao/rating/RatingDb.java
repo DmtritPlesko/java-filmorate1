@@ -8,4 +8,5 @@ public interface RatingDb {
     Mpa getRatingById(Long id);
 
     List<Mpa> getAllRating();
+
 }

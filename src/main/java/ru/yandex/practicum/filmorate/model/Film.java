@@ -25,7 +25,7 @@ public class Film {
 
     Long id;
 
-//    @JsonFormat(shape = JsonFormat.Shape.NUMBER)
+    //    @JsonFormat(shape = JsonFormat.Shape.NUMBER)
     Long duration;
 
     Set<Long> likes;

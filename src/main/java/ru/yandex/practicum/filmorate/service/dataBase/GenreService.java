@@ -11,6 +11,7 @@ import ru.yandex.practicum.filmorate.storage.dao.genres.FilmGenres;
 import ru.yandex.practicum.filmorate.storage.dao.genres.FilmGenresDbStorage;
 
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -19,18 +20,18 @@ public class GenreService {
     private FilmGenres filmGenresStorage;
 
     @Autowired
-    public GenreService (FilmGenresDbStorage filmGenresDbStorage) {
+    public GenreService(FilmGenresDbStorage filmGenresDbStorage) {
         this.filmGenresStorage = filmGenresDbStorage;
     }
 
-    public Genre getGenresByID (Long id) {
-        if(id > 6) {
+    public Genre getGenresByID(Long id) {
+        if (id > 6) {
             throw new NotFoundException("Нет жанра с таким айди");
         }
         return filmGenresStorage.getGenresById(id);
     }
 
-    public List<Genre> getAllGenres () {
+    public List<Genre> getAllGenres() {
         return filmGenresStorage.getAllGenres();
     }
 }

@@ -5,7 +5,8 @@ import ru.yandex.practicum.filmorate.model.Status;
 import java.util.List;
 
 public interface StatusDb {
-    Status getStatusById (Long id);
+    Status getStatusById(Long id);
 
-    List<Status> getAllStatus ();
+    List<Status> getAllStatus();
+
 }

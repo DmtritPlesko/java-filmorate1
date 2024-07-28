@@ -8,7 +8,6 @@ import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exeption.NotFoundException;
 import ru.yandex.practicum.filmorate.mappers.UserRowMapper;
@@ -37,17 +36,17 @@ public class UserDbStorage implements UserStorageInterface {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(con -> {
             PreparedStatement pr = con.prepareStatement(sqlQuery, Statement.RETURN_GENERATED_KEYS);
-            pr.setString(1,user.getLogin());
+            pr.setString(1, user.getLogin());
             pr.setString(2, user.getName());
-            pr.setInt(3,user.getYears());
+            pr.setInt(3, user.getYears());
             pr.setString(4, user.getEmail());
             pr.setString(5, user.getPassword());
             pr.setDate(6, Date.valueOf(user.getBirthday()));
             return pr;
-        },keyHolder);
+        }, keyHolder);
 
         Number generatedKey = keyHolder.getKey();
-        if(generatedKey == null ) {
+        if (generatedKey == null) {
             log.error("Ключ не был сгенерирован");
             throw new NotFoundException("КЛЮЧ НЕ БЫЛ СГЕНЕРИРОВАН");
         }
@@ -70,7 +69,7 @@ public class UserDbStorage implements UserStorageInterface {
                 user.getBirthday(),
                 user.getId());
 
-        if(rowsAffected == 0) {
+        if (rowsAffected == 0) {
             log.warn("Пользователь с ID {} не найден или данные не были обновлены", user.getId());
             throw new NotFoundException("Невозможно обновить пользователя с id =" + user.getId());
         }
@@ -96,16 +95,16 @@ public class UserDbStorage implements UserStorageInterface {
         getUserById(friendId);
         log.info("Добавление нового друга");
         final String sqlQueryInsert = "insert into friends (user_id, friend_id,status) values (?,?,?);";
-        jdbcTemplate.update(sqlQueryInsert,friendId, userId,"unconfirmed");
+        jdbcTemplate.update(sqlQueryInsert, friendId, userId, "unconfirmed");
 
     }
 
     @Override
     public void deleteUser(Long id) {
         getUserById(id);
-        log.info("Удаление пользователся с id = {}",id);
+        log.info("Удаление пользователся с id = {}", id);
         String sqlQuery = "delete from users where user_id = ?;";
-        jdbcTemplate.update(sqlQuery,id);
+        jdbcTemplate.update(sqlQuery, id);
     }
 
     @Override
@@ -113,9 +112,9 @@ public class UserDbStorage implements UserStorageInterface {
         log.info("удаление пользователя");
         getUserById(userId);
         getUserById(friendId);
-        log.info("пользователь с id = {} удалил друга с id = {}",userId,friendId);
+        log.info("пользователь с id = {} удалил друга с id = {}", userId, friendId);
         final String sqlQuery = "delete friends where user_id = ? and friend_id = ?";
-        jdbcTemplate.update(sqlQuery,friendId,userId);
+        jdbcTemplate.update(sqlQuery, friendId, userId);
 
     }
 
@@ -132,10 +131,10 @@ public class UserDbStorage implements UserStorageInterface {
     @Override
     public Set<User> allFriend(Long userId) {
         getUserById(userId);
-        log.info("все друзья пользователя с id = "+userId);
+        log.info("все друзья пользователя с id = " + userId);
         final String sqlQuery = "select * from users " +
                 "inner join friends on users.user_id = friends.user_id where friend_id = ?";
-        return new HashSet<>(jdbcTemplate.query(sqlQuery,UserRowMapper::mapRow,userId));
+        return new HashSet<>(jdbcTemplate.query(sqlQuery, UserRowMapper::mapRow, userId));
     }
 
     @Override
@@ -147,6 +146,7 @@ public class UserDbStorage implements UserStorageInterface {
                 "inner join friends f1 on u.user_id = f1.friend_id " +
                 "inner join friends f2 on u.user_id = f2.friend_id " +
                 "where f1.user_id = ? and f2.user_id = ?";
-        return jdbcTemplate.query(sqlQuery,UserRowMapper::mapRow,userId,friendId);
+        return jdbcTemplate.query(sqlQuery, UserRowMapper::mapRow, friendId, userId);
     }
+
 }

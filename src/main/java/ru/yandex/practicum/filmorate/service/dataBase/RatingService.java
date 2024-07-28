@@ -17,7 +17,7 @@ public class RatingService {
     private RatingDb ratingStorage;
 
     @Autowired
-    public RatingService (RatingDbStorage ratingStorage) {
+    public RatingService(RatingDbStorage ratingStorage) {
         this.ratingStorage = ratingStorage;
     }
 

@@ -14,7 +14,7 @@ import java.util.List;
 public class StatusService {
     private StatusDb statusStorage;
 
-    public Status getStatusById (Long id) {
+    public Status getStatusById(Long id) {
         return statusStorage.getStatusById(id);
     }
 

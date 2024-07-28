@@ -26,7 +26,7 @@ public class StatusStorageDb implements StatusDb {
         try {
             Status status = jdbcTemplate.queryForObject(sqlQuery,
                     new MapSqlParameterSource[]{new MapSqlParameterSource().addValue("id", id)}
-                    ,StatusMapper::mapRow);
+                    , StatusMapper::mapRow);
             return status;
         } catch (EmptyResultDataAccessException e) {
             throw new NotFoundException("Статус с id = " + id + " не найден");
@@ -40,4 +40,5 @@ public class StatusStorageDb implements StatusDb {
         final String sqlQuery = "select * from rating";
         return new ArrayList<>(jdbcTemplate.query(sqlQuery, StatusMapper::mapRow));
     }
+
 }

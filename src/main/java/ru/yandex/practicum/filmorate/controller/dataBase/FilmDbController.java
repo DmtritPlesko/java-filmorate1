@@ -15,7 +15,7 @@ public class FilmDbController {
     private FilmDbService filmService;
 
     @Autowired
-    public FilmDbController (FilmDbService filmService) {
+    public FilmDbController(FilmDbService filmService) {
         this.filmService = filmService;
     }
 
@@ -25,7 +25,7 @@ public class FilmDbController {
     }
 
     @GetMapping("/{id}")
-    public Film getFilmById (@PathVariable("id") Long id) {
+    public Film getFilmById(@PathVariable("id") Long id) {
         return filmService.getFilmById(id);
     }
 
@@ -35,7 +35,7 @@ public class FilmDbController {
     }
 
     @PutMapping
-    public Film updateFilm (@RequestBody Film film) {
+    public Film updateFilm(@RequestBody Film film) {
         return filmService.updateFilm(film);
     }
 
@@ -45,19 +45,19 @@ public class FilmDbController {
     }
 
     @PutMapping("/{id}/like/{userId}")
-    public void takeLike (@PathVariable("id") Long filmId,
-                          @PathVariable("userId") Long userId) {
-        filmService.takeLike(filmId,userId);
+    public void takeLike(@PathVariable("id") Long filmId,
+                         @PathVariable("userId") Long userId) {
+        filmService.takeLike(filmId, userId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
-    public void deleteLike (@PathVariable("id") Long filmId,
-                            @PathVariable("userId") Long userId) {
-        filmService.deleteLike(filmId,userId);
+    public void deleteLike(@PathVariable("id") Long filmId,
+                           @PathVariable("userId") Long userId) {
+        filmService.deleteLike(filmId, userId);
     }
 
     @GetMapping("/popular")
-    public List<Film> getPopular (@RequestParam(value = "count", defaultValue = "10") Long limit) {
+    public List<Film> getPopular(@RequestParam(value = "count", defaultValue = "10") Long limit) {
         return filmService.getPopularFilm(limit);
     }
 }

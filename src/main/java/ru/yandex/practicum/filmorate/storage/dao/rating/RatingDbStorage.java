@@ -16,16 +16,16 @@ import java.util.List;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class RatingDbStorage implements RatingDb{
+public class RatingDbStorage implements RatingDb {
     private final JdbcTemplate jdbcTemplate;
 
     @Override
     public Mpa getRatingById(Long id) {
-        log.info("Пытаемся взять рейтинг с id = {}",id);
+        log.info("Пытаемся взять рейтинг с id = {}", id);
         final String sqlQuery = "select * from mpa where mpa_id = ?";
         try {
-            return jdbcTemplate.queryForObject(sqlQuery,new Object[]{id},RatingMapper::mapRow);
-        }catch (IncorrectResultSizeDataAccessException e) {
+            return jdbcTemplate.queryForObject(sqlQuery, new Object[]{id}, RatingMapper::mapRow);
+        } catch (IncorrectResultSizeDataAccessException e) {
             throw new NotFoundException("Рейтин с id=" + id + " не найден");
         }
     }
@@ -34,6 +34,7 @@ public class RatingDbStorage implements RatingDb{
     public List<Mpa> getAllRating() {
         log.info("Берём все рейтинги которые есть в базе");
         final String sqlQuery = "select * from mpa";
-        return jdbcTemplate.query(sqlQuery,RatingMapper::mapRow);
+        return jdbcTemplate.query(sqlQuery, RatingMapper::mapRow);
     }
+
 }

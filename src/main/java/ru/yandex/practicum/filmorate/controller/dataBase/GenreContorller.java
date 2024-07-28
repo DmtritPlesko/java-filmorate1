@@ -17,12 +17,12 @@ public class GenreContorller {
     private GenreService genreService;
 
     @Autowired
-    public GenreContorller (GenreService genreService) {
+    public GenreContorller(GenreService genreService) {
         this.genreService = genreService;
     }
 
     @GetMapping
-    public List<Genre> getAllGenres () {
+    public List<Genre> getAllGenres() {
         return genreService.getAllGenres();
     }
 
