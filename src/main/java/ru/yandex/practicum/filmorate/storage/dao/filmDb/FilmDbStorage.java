@@ -60,9 +60,6 @@ public class FilmDbStorage implements FilmStorageInterface {
         }, keyHolder);
 
         Number number = keyHolder.getKey();
-        if (number == null) {
-            throw new NotFoundException("fqwfqw");
-        }
         film.setId(number.longValue());
         if (film.getGenres() != null) {
             for (Genre genre : film.getGenres()) {
@@ -176,9 +173,9 @@ public class FilmDbStorage implements FilmStorageInterface {
                 "    FROM likes " +
                 "    GROUP BY likes.film_id " +
                 "    ORDER BY COUNT(likes.user_id) DESC " +
-
+                "limit ?" +
                 ");";
-        return jdbcTemplate.query(sqlQuery, FilmRowMapper::mapRow);
+        return jdbcTemplate.query(sqlQuery, FilmRowMapper::mapRow,limit);
     }
 
 }

@@ -46,10 +46,6 @@ public class UserDbStorage implements UserStorageInterface {
         }, keyHolder);
 
         Number generatedKey = keyHolder.getKey();
-        if (generatedKey == null) {
-            log.error("Ключ не был сгенерирован");
-            throw new NotFoundException("КЛЮЧ НЕ БЫЛ СГЕНЕРИРОВАН");
-        }
         user.setId(generatedKey.longValue());
         return user;
     }
@@ -73,13 +69,7 @@ public class UserDbStorage implements UserStorageInterface {
             log.warn("Пользователь с ID {} не найден или данные не были обновлены", user.getId());
             throw new NotFoundException("Невозможно обновить пользователя с id =" + user.getId());
         }
-
-        try {
-            return getUserById(user.getId());
-        } catch (NotFoundException e) {
-            log.error("Ошибка при получении обновленных данных пользователя с ID {}", user.getId(), e);
-            throw new RuntimeException("Не удалось получить обновленные данные пользователя", e);
-        }
+        return user;
     }
 
     @Override

@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.service.dataBase;
+package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +39,7 @@ public class FilmDbService {
     }
 
     public List<Film> getAllFilms() {
-        return (List<Film>) filmStorage.allFilms();
+        return filmStorage.allFilms();
     }
 
     public List<Film> getPopularFilm(Long limit) {
@@ -79,17 +79,6 @@ public class FilmDbService {
         } else if (film.getDuration() < 0) {
             log.error("Продолжительность не может быть отрицательной");
             throw new ValidationException("Продолжительность не может быть отрицательной");
-        } else if (film.getMpa() != null) {
-            if (film.getMpa().getId() > 5) {
-                throw new ValidationException("Нет такого рейтинга");
-            }
-        } else if (film.getGenres() != null) {
-            List<Long> genresNotBase = film.getGenres().stream()
-                    .map(Genre::getId).filter(id -> id > 6).toList();
-            if (!genresNotBase.isEmpty()) {
-                throw new ValidationException("Ошибка жанров");
-            }
         }
-
     }
 }

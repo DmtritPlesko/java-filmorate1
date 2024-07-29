@@ -14,7 +14,7 @@ public interface FilmStorageInterface {
 
     Film getFilmByID(Long id);
 
-    Collection<Film> allFilms();
+    List<Film> allFilms();
 
     void takeLike(Long id, Long userId);
 

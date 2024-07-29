@@ -12,7 +12,7 @@ import java.util.*;
 @Component
 public class FilmRowMapper {
     public static Film mapRow(ResultSet rs, int rowNum) throws SQLException {
-        Mpa mpa = new Mpa(rs.getInt("mpa_id"), rs.getString("mpa_name"));
+        Mpa mpa = new Mpa(rs.getInt("films.mpa_id"), rs.getString("mpa_name"));
         Film film = Film.builder()
                 .id(rs.getLong("film_id"))
                 .name(rs.getString("name"))
