@@ -1,11 +1,8 @@
-package ru.yandex.practicum.filmorate.dto;
+package ru.yandex.practicum.filmorate.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.Duration;
 import java.time.LocalDate;
 import java.util.Set;
 
@@ -14,8 +11,9 @@ import java.util.Set;
  */
 @Data
 @Builder
-@NonNull
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@AllArgsConstructor
+@NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Film {
 
@@ -25,13 +23,16 @@ public class Film {
 
     LocalDate releaseDate;
 
-    long id;
+    Long id;
 
-    @JsonFormat(shape = JsonFormat.Shape.NUMBER)
-    Duration duration;
+    //    @JsonFormat(shape = JsonFormat.Shape.NUMBER)
+    Long duration;
 
     Set<Long> likes;
 
+    Set<Genre> genres;
+
+    Mpa mpa;
 }
 
 

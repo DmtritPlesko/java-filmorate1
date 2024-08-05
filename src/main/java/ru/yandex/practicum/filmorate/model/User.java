@@ -1,19 +1,20 @@
-package ru.yandex.practicum.filmorate.dto;
+package ru.yandex.practicum.filmorate.model;
+
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.Set;
 
 
 @Data
 @Builder
 @NonNull
+@AllArgsConstructor
+@NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = false)
 public class User {
 
     Long id;
@@ -24,8 +25,14 @@ public class User {
 
     String name;
 
+    int years;
+
+    String password;
+
     LocalDate birthday;
 
-    Set<Long> friends;
+//    Set<Long> friends;
+
+    Status friend;
 
 }

@@ -4,69 +4,68 @@ import io.micrometer.common.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.dto.User;
-import ru.yandex.practicum.filmorate.exeption.NotFoundException;
 import ru.yandex.practicum.filmorate.exeption.ValidationException;
-import ru.yandex.practicum.filmorate.storage.userstorage.UserStorageInterface;
+import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.dao.userDb.UserDbStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorageInterface;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-
 @Slf4j
 @Service
-public class UserService {
+public class UserDbService {
     private UserStorageInterface userStorage;
-    private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
     @Autowired
-    public UserService(UserStorageInterface userStorage) {
+    public UserDbService(UserDbStorage userStorage) {
         this.userStorage = userStorage;
     }
 
-    public User createUser(User user) {
+    //create
+    public User addUser(User user) {
         validation(user);
-
-        if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-        }
-
         return userStorage.createUser(user);
-    }
-
-    public User update(User user) {
-        validation(user);
-        return userStorage.update(user);
-    }
-
-    public User getUserById(Long userId) {
-        return userStorage.getUserById(userId);
-    }
-
-    public Collection<User> allUser() {
-        return userStorage.allUser();
     }
 
     public void addNewFriend(Long userId, Long friendId) {
         userStorage.addNewFriend(userId, friendId);
     }
 
-    public void deleteFriend(Long userId, Long friendId) {
-        userStorage.deleteFriend(userId, friendId);
+    //read
+    public User getUserById(Long id) {
+        return userStorage.getUserById(id);
     }
 
-    public Set<User> getAllFriend(Long userId) {
+    public List<User> getAllUser() {
+        return userStorage.allUser();
+    }
+
+    public Set<User> allFriend(Long userId) {
         return userStorage.allFriend(userId);
     }
 
-    public List<User> getMutualFriends(Long userId, Long friendId) {
+    public List<User> getMutualFriend(Long userId, Long friendId) {
         return userStorage.getMutualFriends(userId, friendId);
     }
+
+    //update
+    public User updateUser(User user) {
+        validation(user);
+        return userStorage.update(user);
+    }
+
+    //delete
+    public void deleteUser(Long id) {
+        userStorage.deleteUser(id);
+    }
+
+    public void deleteFriendFromUser(Long userId, Long friendId) {
+        userStorage.deleteFriend(userId, friendId);
+    }
+
     private void validation(User user) {
         if (StringUtils.isBlank(user.getEmail())) {
             throw new ValidationException("Электронная почта не может быть пустой");
