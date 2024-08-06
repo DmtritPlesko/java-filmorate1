@@ -1,30 +1,20 @@
 package ru.yandex.practicum.filmorate.storage.dao.filmDb;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.util.http.fileupload.FileUpload;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Primary;
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
-import org.springframework.web.service.annotation.HttpExchange;
 import ru.yandex.practicum.filmorate.exeption.NotFoundException;
 import ru.yandex.practicum.filmorate.mappers.FilmRowMapper;
 import ru.yandex.practicum.filmorate.mappers.GenresMapper;
-import ru.yandex.practicum.filmorate.mappers.UserRowMapper;
 import ru.yandex.practicum.filmorate.model.*;
 import ru.yandex.practicum.filmorate.storage.FilmStorageInterface;
 import ru.yandex.practicum.filmorate.storage.dao.genres.FilmGenresDbStorage;
-import ru.yandex.practicum.filmorate.storage.dao.userDb.UserDbStorage;
 
 import java.sql.*;
 import java.sql.Date;
@@ -45,7 +35,7 @@ public class FilmDbStorage implements FilmStorageInterface {
     public Film addNewFilm(Film film) {
         log.info("Добавление нового фильма в БД");
 
-        final String sqlQuery = "INSERT INTO films (name, description, releaseDate, duration, mpa_id) VALUES (?, ?, ?, ?,?)";
+        final String sqlQuery = "INSERT INTO films (name, description, releaseDate, duration,mpa_id) VALUES (?, ?, ?, ?,?)";
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
@@ -102,28 +92,18 @@ public class FilmDbStorage implements FilmStorageInterface {
         return film;
     }
 
-
-    @Override
-    public void deleteFilm(Long id) {
-        String deleteGenreSql = "DELETE FROM filmgenres WHERE film_id = ?";
-        jdbcTemplate.update(deleteGenreSql, id);
-        String sqlQuery = "delete from films where film_id = ?;";
-        jdbcTemplate.update(sqlQuery, id);
-        log.info("Удаление фильма c id = {}", id);
-    }
-
     @Override
     public Film getFilmByID(Long id) {
         log.info("Фильм с id = {} ", id);
-        String sqlQuery = "select * from films " +
-                "left join mpa on films.mpa_id = mpa.mpa_id " +
-                "where films.film_id = ?;";
+        String sqlQuery = "SELECT * FROM films " +
+                "LEFT JOIN mpa ON films.mpa_id = mpa.mpa_id " +
+                "WHERE films.film_id = ?;";
         try {
             Film film = jdbcTemplate.queryForObject(sqlQuery, FilmRowMapper::mapRow, id);
-            final String sqlQueryGenres = "select * from FILMGENRES " +
-                    "left join genres " +
-                    "on FILMGENRES.genre_id = genres.genre_id " +
-                    "where FILMGENRES.film_id = ?;";
+            final String sqlQueryGenres = "SELECT * FROM filmgenres " +
+                    "LEFT JOIN genres " +
+                    "ON filmgenres.genre_id = genres.genre_id " +
+                    "WHERE filmgenres.film_id = ?;";
             film.setGenres(new HashSet<>(jdbcTemplate.query(sqlQueryGenres, GenresMapper::mapRow, id)));
             return film;
         } catch (IncorrectResultSizeDataAccessException e) {
@@ -136,7 +116,7 @@ public class FilmDbStorage implements FilmStorageInterface {
         log.info("Список всех фильмов");
 
         String sqlQuery = "SELECT * FROM films " +
-                "left join mpa on films.mpa_id = mpa.mpa_id " +
+                "LEFT JOIN mpa ON films.mpa_id = mpa.mpa_id " +
                 "LEFT JOIN filmgenres ON films.film_id = filmgenres.film_id " +
                 "LEFT JOIN genres ON filmgenres.genre_id = genres.genre_id " +
                 "LEFT JOIN likes ON likes.film_id = films.film_id;";
@@ -147,21 +127,27 @@ public class FilmDbStorage implements FilmStorageInterface {
     @Override
     public void takeLike(Long filmId, Long userId) {
         log.info("Пользователь с id = {} поставил лайк фильму с id = {}", userId, filmId);
-        final String sqlQuery = "INSERT INTO likes (film_id, user_id) VALUES (?, ?)";
-        jdbcTemplate.update(sqlQuery, filmId, userId);
+        final String sqlQuery = "INSERT INTO likes (film_id,user_id) VALUES (?,?)";
+        jdbcTemplate.update(con -> {
+            PreparedStatement pr = con.prepareStatement(sqlQuery);
+            pr.setLong(1, filmId);
+            pr.setLong(2, userId);
+            return pr;
+        });
     }
+
 
     @Override
     public void deleteLike(Long id, Long userId) {
         log.info("Пользователь с id = {} убрал лайк с фильму с id = {}", userId, id);
-        final String sqlQuery = "delete from likes where film_id = ? and user_id = ?";
+        final String sqlQuery = "DELETE FROM likes WHERE film_id = ? AND user_id = ?";
         jdbcTemplate.update(sqlQuery, id, userId);
     }
 
     public List<Film> getPopularFilm(Long limit) {
         log.info("Популярные фильмы ");
         String sqlQuery = "SELECT * FROM films " +
-                "inner join mpa on films.mpa_id=mpa.mpa_id " +
+                "INNER JOIN mpa ON films.mpa_id=mpa.mpa_id " +
                 "WHERE film_id IN ( SELECT likes.film_id as gg FROM likes GROUP BY (gg)  " +
                 "ORDER BY (count(likes.user_id)) Desc ) limit ?";
         return jdbcTemplate.query(sqlQuery, FilmRowMapper::mapRow, new Object[]{limit});

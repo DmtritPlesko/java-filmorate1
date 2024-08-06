@@ -22,7 +22,7 @@ public class RatingDbStorage implements RatingDb {
     @Override
     public Mpa getRatingById(Long id) {
         log.info("Пытаемся взять рейтинг с id = {}", id);
-        final String sqlQuery = "select * from mpa where mpa_id = ?";
+        final String sqlQuery = "SELECT * FROM mpa WHERE mpa_id = ?";
         try {
             return jdbcTemplate.queryForObject(sqlQuery, new Object[]{id}, RatingMapper::mapRow);
         } catch (IncorrectResultSizeDataAccessException e) {
@@ -33,7 +33,7 @@ public class RatingDbStorage implements RatingDb {
     @Override
     public List<Mpa> getAllRating() {
         log.info("Берём все рейтинги которые есть в базе");
-        final String sqlQuery = "select * from mpa";
+        final String sqlQuery = "SELECT * FROM mpa";
         return jdbcTemplate.query(sqlQuery, RatingMapper::mapRow);
     }
 
