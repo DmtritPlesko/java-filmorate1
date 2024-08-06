@@ -78,7 +78,7 @@ public class FilmDbStorage implements FilmStorageInterface {
                 "name = ?, " +
                 "description = ?, " +
                 "releaseDate = ?, " +
-                "duration = ? " + // Removed comma after duration
+                "duration = ? " +
                 "WHERE film_id = ?;";
         int temp = jdbcTemplate.update(sqlQuery,
                 film.getName(),
@@ -91,6 +91,7 @@ public class FilmDbStorage implements FilmStorageInterface {
         }
         return film;
     }
+
 
     @Override
     public Film getFilmByID(Long id) {
@@ -116,7 +117,7 @@ public class FilmDbStorage implements FilmStorageInterface {
         log.info("Список всех фильмов");
 
         String sqlQuery = "SELECT * FROM films " +
-                "LEFT JOIN mpa ON films.mpa_id = mpa.mpa_id " +
+                "left join mpa on films.mpa_id = mpa.mpa_id " +
                 "LEFT JOIN filmgenres ON films.film_id = filmgenres.film_id " +
                 "LEFT JOIN genres ON filmgenres.genre_id = genres.genre_id " +
                 "LEFT JOIN likes ON likes.film_id = films.film_id;";
