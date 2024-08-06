@@ -18,7 +18,7 @@ public class FilmGenresDbStorage implements FilmGenres {
     @Override
     public Genre getGenresById(Long id) {
         log.info("Пытаемся взять жанр с id = {}", id);
-        final String sqlQuery = "select * from genres where genre_id = ?;";
+        final String sqlQuery = "SELECT * FROM genres WHERE genre_id = ?;";
         return jdbcTemplate.queryForObject(sqlQuery, GenresMapper::mapRow, id);
 
     }
@@ -26,7 +26,7 @@ public class FilmGenresDbStorage implements FilmGenres {
     @Override
     public List<Genre> getAllGenres() {
         log.info("Береём все жанры");
-        final String sqlQuery = "select * from genres;";
+        final String sqlQuery = "SELECT * FROM genres;";
         return jdbcTemplate.query(sqlQuery, GenresMapper::mapRow);
     }
 

@@ -23,10 +23,9 @@ public class Film {
     String description;
 
     LocalDate releaseDate;
-    @PositiveOrZero
+
     Long id;
 
-    //    @JsonFormat(shape = JsonFormat.Shape.NUMBER)
     Long duration;
 
     Set<Long> likes;

@@ -32,8 +32,8 @@ public class UserDbStorage implements UserStorageInterface {
     @Override
     public User createUser(User user) {
         log.info("Добавление нового пользователя в бд");
-        String sqlQuery = "insert into users (login,name,age,email,password,birthday) " +
-                "values (?,?,?,?,?,?);";
+        String sqlQuery = "INSERT INTO users (login,name,age,email,password,birthday) " +
+                "VALUES (?,?,?,?,?,?);";
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(con -> {
@@ -56,7 +56,8 @@ public class UserDbStorage implements UserStorageInterface {
     @Override
     public User update(User user) {
         log.info("Обновление пользователя с ID {}", user.getId());
-        final String sqlQuery = "UPDATE users SET name = ?, age = ?, email = ?, login = ?, password = ?, birthday = ? WHERE user_id = ?";
+        final String sqlQuery = "UPDATE users SET name = ?, age = ?, email = ?, login = ?," +
+                " password = ?, birthday = ? WHERE user_id = ?";
 
         int rowsAffected = jdbcTemplate.update(sqlQuery,
                 user.getName(),
@@ -77,7 +78,7 @@ public class UserDbStorage implements UserStorageInterface {
     @Override
     public List<User> allUser() {
         log.info("Берём всех пользователей");
-        String sqlQuery = "select * from users;";
+        String sqlQuery = "SELECT * FROM users;";
         return jdbcTemplate.query(sqlQuery, UserRowMapper::mapRow);
     }
 
@@ -86,7 +87,7 @@ public class UserDbStorage implements UserStorageInterface {
         getUserById(userId);
         getUserById(friendId);
         log.info("Добавление нового друга");
-        jdbcTemplate.update("insert into friends (user_id, friend_id, status) values (?, ?, ?)", +
+        jdbcTemplate.update("INSERT INTO friends (user_id, friend_id, status) VALUES (?, ?, ?)", +
                 userId, friendId, "unconfirmed");
 
     }
@@ -95,7 +96,7 @@ public class UserDbStorage implements UserStorageInterface {
     public void deleteUser(Long id) {
         getUserById(id);
         log.info("Удаление пользователся с id = {}", id);
-        String sqlQuery = "delete from users where user_id = ?;";
+        String sqlQuery = "DELETE FROM users WHERE user_id = ?;";
         jdbcTemplate.update(sqlQuery, id);
     }
 
@@ -105,14 +106,14 @@ public class UserDbStorage implements UserStorageInterface {
         getUserById(userId);
         getUserById(friendId);
         log.info("пользователь с id = {} удалил друга с id = {}", userId, friendId);
-        final String sqlQuery = "delete from friends where user_id = ? and friend_id = ?";
+        final String sqlQuery = "DELETE FROM friends WHERE user_id = ? AND friend_id = ?";
         jdbcTemplate.update(sqlQuery, userId, friendId);
 
     }
 
     @Override
     public User getUserById(Long id) {
-        String sqlQuery = "select * from users where user_id = ?";
+        String sqlQuery = "SELECT * FROM users WHERE user_id = ?";
         try {
             return jdbcTemplate.queryForObject(sqlQuery, new Object[]{id}, UserRowMapper::mapRow);
         } catch (IncorrectResultSizeDataAccessException e) {
@@ -124,8 +125,8 @@ public class UserDbStorage implements UserStorageInterface {
     public Set<User> allFriend(Long userId) {
         getUserById(userId);
         log.info("все друзья пользователя с id = {}", userId);
-        final String sqlQuery = "select * from users u " +
-                "join friends f on u.user_id = f.friend_id where f.user_id = ?";
+        final String sqlQuery = "SELECT * FROM users u " +
+                "JOIN friends f ON u.user_id = f.friend_id WHERE f.user_id = ?";
         return new HashSet<>(jdbcTemplate.query(sqlQuery, UserRowMapper::mapRow, userId));
     }
 
