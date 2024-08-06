@@ -47,7 +47,7 @@ public class UserDbService {
         return userStorage.allFriend(userId);
     }
 
-    public List<User> getMutualFriend(Long userId, Long friendId) {
+    public Set<User> getMutualFriend(Long userId, Long friendId) {
         return userStorage.getMutualFriends(userId, friendId);
     }
 

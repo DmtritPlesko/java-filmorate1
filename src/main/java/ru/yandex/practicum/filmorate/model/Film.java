@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -22,7 +23,7 @@ public class Film {
     String description;
 
     LocalDate releaseDate;
-
+    @PositiveOrZero
     Long id;
 
     //    @JsonFormat(shape = JsonFormat.Shape.NUMBER)

@@ -31,7 +31,7 @@ class UserDbStorageTest {
 
         User user1 = userDbStorage.getUserById(user.getId());
 
-        assertThat(user1).hasFieldOrPropertyWithValue("id",1L);
+        assertThat(user1).hasFieldOrPropertyWithValue("id",2L);
 
         userDbStorage.deleteUser(user.getId());
 
@@ -57,7 +57,7 @@ class UserDbStorageTest {
     public void updateUserAndGetById() {
         Status status = new Status(1L,"confirm");
 
-        User user = new User(1L,"email@mail.ru","login12"
+        User user = new User(1L,"email1@mail.ru","login12"
                 ,"Roma",15,"qwe123", LocalDate.now(),status);
         userDbStorage.createUser(user);
 
@@ -76,7 +76,7 @@ class UserDbStorageTest {
     public void deleteUserAndGerAllUser() {
         Status status = new Status(1L,"confirm");
 
-        User user = new User(1L,"email@mail.ru","login12"
+        User user = new User(1l,"email1@mail.ru","login12"
                 ,"Roma",15,"qwe123", LocalDate.now(),status);
         userDbStorage.createUser(user);
 

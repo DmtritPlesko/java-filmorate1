@@ -17,7 +17,9 @@ import ru.yandex.practicum.filmorate.storage.UserStorageInterface;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Setter
@@ -84,8 +86,8 @@ public class UserDbStorage implements UserStorageInterface {
         getUserById(userId);
         getUserById(friendId);
         log.info("Добавление нового друга");
-        final String sqlQueryInsert = "insert into friends (user_id, friend_id,status) values (?,?,?);";
-        jdbcTemplate.update(sqlQueryInsert, friendId, userId, "unconfirmed");
+        jdbcTemplate.update("insert into friends (user_id, friend_id, status) values (?, ?, ?)", +
+                userId, friendId, "unconfirmed");
 
     }
 
@@ -103,8 +105,8 @@ public class UserDbStorage implements UserStorageInterface {
         getUserById(userId);
         getUserById(friendId);
         log.info("пользователь с id = {} удалил друга с id = {}", userId, friendId);
-        final String sqlQuery = "delete friends where user_id = ? and friend_id = ?";
-        jdbcTemplate.update(sqlQuery, friendId, userId);
+        final String sqlQuery = "delete from friends where user_id = ? and friend_id = ?";
+        jdbcTemplate.update(sqlQuery, userId, friendId);
 
     }
 
@@ -121,22 +123,24 @@ public class UserDbStorage implements UserStorageInterface {
     @Override
     public Set<User> allFriend(Long userId) {
         getUserById(userId);
-        log.info("все друзья пользователя с id = " + userId);
-        final String sqlQuery = "select * from users " +
-                "inner join friends on users.user_id = friends.user_id where friend_id = ?";
+        log.info("все друзья пользователя с id = {}", userId);
+        final String sqlQuery = "select * from users u " +
+                "join friends f on u.user_id = f.friend_id where f.user_id = ?";
         return new HashSet<>(jdbcTemplate.query(sqlQuery, UserRowMapper::mapRow, userId));
     }
 
     @Override
-    public List<User> getMutualFriends(Long userId, Long friendId) {
+    public Set<User> getMutualFriends(Long userId, Long friendId) {
         getUserById(userId);
         getUserById(friendId);
         log.info("Поиск общих друзей");
-        final String sqlQuery = "select distinct u.* from users u " +
-                "inner join friends f1 on u.user_id = f1.friend_id " +
-                "inner join friends f2 on u.user_id = f2.friend_id " +
-                "where f1.user_id = ? and f2.user_id = ?";
-        return jdbcTemplate.query(sqlQuery, UserRowMapper::mapRow, friendId, userId);
+        final String sqlQuery = "SELECT DISTINCT u.* FROM users u JOIN friends f "
+                + "ON u.user_id = f.friend_id WHERE f.user_id = ? AND u.user_id "
+                + "IN (SELECT f.friend_id FROM friends f WHERE f.user_id = ?)";
+        return new HashSet<>(jdbcTemplate.query(sqlQuery,
+                UserRowMapper::mapRow,
+                userId,
+                friendId));
     }
 
 }

@@ -45,7 +45,7 @@ public class FilmDbStorage implements FilmStorageInterface {
     public Film addNewFilm(Film film) {
         log.info("Добавление нового фильма в БД");
 
-        final String sqlQuery = "INSERT INTO films (name, description, releaseDate, duration,mpa_id) VALUES (?, ?, ?, ?,?)";
+        final String sqlQuery = "INSERT INTO films (name, description, releaseDate, duration, mpa_id) VALUES (?, ?, ?, ?,?)";
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
@@ -147,13 +147,8 @@ public class FilmDbStorage implements FilmStorageInterface {
     @Override
     public void takeLike(Long filmId, Long userId) {
         log.info("Пользователь с id = {} поставил лайк фильму с id = {}", userId, filmId);
-        final String sqlQuery = "insert into likes (film_id,user_id) values (?,?)";
-        jdbcTemplate.update(con -> {
-            PreparedStatement pr = con.prepareStatement(sqlQuery);
-            pr.setLong(1, filmId);
-            pr.setLong(2, userId);
-            return pr;
-        });
+        final String sqlQuery = "INSERT INTO likes (film_id, user_id) VALUES (?, ?)";
+        jdbcTemplate.update(sqlQuery, filmId, userId);
     }
 
     @Override
@@ -165,17 +160,11 @@ public class FilmDbStorage implements FilmStorageInterface {
 
     public List<Film> getPopularFilm(Long limit) {
         log.info("Популярные фильмы ");
-        String sqlQuery = "SELECT * " +
-                "FROM films " +
-                "inner join mpa on films.mpa_id = mpa.mpa_id " +
-                "WHERE film_id IN ( " +
-                "    SELECT  likes.film_id " +
-                "    FROM likes " +
-                "    GROUP BY likes.film_id " +
-                "    ORDER BY COUNT(likes.user_id) DESC " +
-                "limit ?" +
-                ");";
-        return jdbcTemplate.query(sqlQuery, FilmRowMapper::mapRow,limit);
+        String sqlQuery = "SELECT * FROM films " +
+                "inner join mpa on films.mpa_id=mpa.mpa_id " +
+                "WHERE film_id IN ( SELECT likes.film_id as gg FROM likes GROUP BY (gg)  " +
+                "ORDER BY (count(likes.user_id)) Desc ) limit ?";
+        return jdbcTemplate.query(sqlQuery, FilmRowMapper::mapRow, new Object[]{limit});
     }
 
 }

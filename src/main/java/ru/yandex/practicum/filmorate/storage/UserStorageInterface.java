@@ -25,5 +25,5 @@ public interface UserStorageInterface {
 
     Set<User> allFriend(Long userId);
 
-    List<User> getMutualFriends(Long userId, Long friendId);
+    Set<User> getMutualFriends(Long userId, Long friendId);
 }
