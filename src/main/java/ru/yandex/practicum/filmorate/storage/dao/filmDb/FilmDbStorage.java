@@ -136,7 +136,6 @@ public class FilmDbStorage implements FilmStorageInterface {
         });
     }
 
-
     @Override
     public void deleteLike(Long id, Long userId) {
         log.info("Пользователь с id = {} убрал лайк с фильму с id = {}", userId, id);
