@@ -18,7 +18,6 @@ public class FilmDbService {
     private FilmStorageInterface filmStorage;
     private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
-
     @Autowired
     public FilmDbService(FilmDbStorage filmDbStorage) {
         this.filmStorage = filmDbStorage;
@@ -43,6 +42,9 @@ public class FilmDbService {
         return filmStorage.getPopularFilm(limit);
     }
 
+    public List<Film> getFilmBySort(Long id, List<String> sortBy) {
+        return filmStorage.getFilmBySort(id, sortBy);
+    }
 
     //update
     public Film updateFilm(Film film) {

@@ -24,14 +24,13 @@ public class StatusStorageDb implements StatusDb {
         final String sqlQuery = "SELECT * FROM status WHERE id = ?";
         try {
             Status status = jdbcTemplate.queryForObject(sqlQuery,
-                    new MapSqlParameterSource[]{new MapSqlParameterSource().addValue("id", id)}
-                    , StatusMapper::mapRow);
+                    new MapSqlParameterSource[]{new MapSqlParameterSource().addValue("id", id)},
+                    StatusMapper::mapRow);
             return status;
         } catch (EmptyResultDataAccessException e) {
             throw new NotFoundException("Статус с id = " + id + " не найден");
         }
     }
-
 
     @Override
     public List<Status> getAllStatus() {

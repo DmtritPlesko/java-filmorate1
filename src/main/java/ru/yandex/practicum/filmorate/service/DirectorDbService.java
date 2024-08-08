@@ -15,7 +15,7 @@ public class DirectorDbService {
     private final DirectorDb directorDbStorage;
 
     @Autowired
-    public DirectorDbService (DirectorDbStorage directorDb) {
+    public DirectorDbService(DirectorDbStorage directorDb) {
         this.directorDbStorage = directorDb;
     }
 
@@ -27,18 +27,18 @@ public class DirectorDbService {
         return directorDbStorage.allDirectors();
     }
 
-    public Director getDirectorById (Long id) {
+    public Director getDirectorById(Long id) {
         return directorDbStorage.getDirectorById(id);
     }
 
     public Director updateDirector(Director director) {
+        getDirectorById(director.getId());
         return directorDbStorage.updateDirector(director);
     }
 
     public void deleteDirectorById(Long id) {
+        getDirectorById(id);
         directorDbStorage.deleteDirectorById(id);
     }
-
-
 
 }

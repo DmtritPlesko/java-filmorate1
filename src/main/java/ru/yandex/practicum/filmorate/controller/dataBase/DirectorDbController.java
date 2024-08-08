@@ -1,24 +1,26 @@
 package ru.yandex.practicum.filmorate.controller.dataBase;
 
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.service.DirectorDbService;
 
-@Controller
+@RestController
 @RequestMapping("/directors")
 public class DirectorDbController {
     private final DirectorDbService directorDbService;
 
     @Autowired
-    public DirectorDbController (DirectorDbService directorDb) {
-        this.directorDbService = directorDb;
+    public DirectorDbController(DirectorDbService directorDbService) {
+        this.directorDbService = directorDbService;
     }
 
     //create
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public Director createDirector(@RequestBody Director director) {
         return directorDbService.createDirector(director);
     }
@@ -30,7 +32,7 @@ public class DirectorDbController {
     }
 
     @GetMapping("/{id}")
-    public Director getDirectorById (@PathVariable("id") Long id) {
+    public Director getDirectorById(@PathVariable("id") Long id) {
         return directorDbService.getDirectorById(id);
     }
 
@@ -42,8 +44,8 @@ public class DirectorDbController {
 
     //delete
     @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteDirectorById(@PathVariable("id") Long id) {
         directorDbService.deleteDirectorById(id);
     }
-
 }
