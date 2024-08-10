@@ -41,10 +41,10 @@ class ReviewStorageDBTest {
     }
 
     private User createUser() {
-        String uniqueEmailSuffix = UUID.randomUUID().toString();
-        String email = "email" + uniqueEmailSuffix + "@mail.ru";
+        final String uniqueEmailSuffix = UUID.randomUUID().toString();
+        final String email = "email" + uniqueEmailSuffix + "@mail.ru";
 
-        User user = new User();
+        final User user = new User();
         user.setEmail(email);
         user.setName("Имя");
         user.setBirthday(LocalDate.now());
@@ -52,17 +52,17 @@ class ReviewStorageDBTest {
     }
 
     private Film createFilm() {
-        Set<Long> likes = new HashSet<>();
+        final Set<Long> likes = new HashSet<>();
         likes.add(1L);
         likes.add(2L);
 
-        Genre genre = new Genre(3L, "qwe");
-        Genre genre1 = new Genre(4L, "Фильм");
-        Set<Genre> genres = new HashSet<>();
+        final Genre genre = new Genre(3L, "qwe");
+        final Genre genre1 = new Genre(4L, "Фильм");
+        final Set<Genre> genres = new HashSet<>();
         genres.add(genre);
         genres.add(genre1);
 
-        Film film = new Film();
+        final Film film = new Film();
         film.setName("Cooler2");
         film.setDescription("THIS IS CooLeer");
         film.setReleaseDate(LocalDate.now());
@@ -75,7 +75,7 @@ class ReviewStorageDBTest {
 
     @Test
     public void shouldCreateReviewWithGivenDetailsSuccessfullyTest() {
-        Review review = new Review();
+        final Review review = new Review();
         review.setContent("not bad");
         review.setIsPositive(true);
         review.setUserId(user.getId());
@@ -84,14 +84,14 @@ class ReviewStorageDBTest {
 
         storage.create(review);
 
-        Review reviewFromDataBase = storage.getReviewById(review.getReviewId());
+        final Review reviewFromDataBase = storage.getReviewById(review.getReviewId());
 
         assertNotNull(reviewFromDataBase, "Объект не сохранен");
     }
 
     @Test
     public void shouldUpdateReviewContentAndCheckUpdatedContentTest() {
-        Review review = new Review();
+        final Review review = new Review();
         review.setContent("not bad");
         review.setIsPositive(true);
         review.setUserId(user.getId());
@@ -100,7 +100,7 @@ class ReviewStorageDBTest {
 
         storage.create(review);
 
-        Review reviewForTest = storage.getReviewById(review.getReviewId());
+        final Review reviewForTest = storage.getReviewById(review.getReviewId());
         reviewForTest.setContent("goood");
 
         storage.update(reviewForTest);
@@ -111,7 +111,7 @@ class ReviewStorageDBTest {
 
     @Test
     public void shouldDeleteReviewByIdAndVerifyDeletionTest() {
-        Review review = new Review();
+        final Review review = new Review();
         review.setContent("not bad");
         review.setIsPositive(true);
         review.setUserId(user.getId());
@@ -128,7 +128,7 @@ class ReviewStorageDBTest {
 
     @Test
     void shouldRetrieveLastReviewOfFilmByIdAndCheckContentTest() {
-        Review review = new Review();
+        final Review review = new Review();
         review.setContent("not bad");
         review.setIsPositive(true);
         review.setUserId(user.getId());
@@ -144,7 +144,7 @@ class ReviewStorageDBTest {
 
     @Test
     void shouldAddPositiveReactionToReviewAndCheckUpdatedUsefulnessTest() {
-        Review review = new Review();
+        final Review review = new Review();
         review.setContent("not bad");
         review.setIsPositive(true);
         review.setUserId(user.getId());
@@ -163,7 +163,7 @@ class ReviewStorageDBTest {
 
     @Test
     void shouldRemoveUserReactionFromReviewAndCheckUpdatedUsefulnessTest() {
-        Review review = new Review();
+        final Review review = new Review();
         review.setContent("not bad");
         review.setIsPositive(true);
         review.setUserId(user.getId());
