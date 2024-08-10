@@ -2,7 +2,7 @@ package ru.yandex.practicum.filmorate.storage;
 
 import ru.yandex.practicum.filmorate.model.Film;
 
-import java.util.*;
+import java.util.List;
 
 public interface FilmStorageInterface {
 
@@ -10,6 +10,11 @@ public interface FilmStorageInterface {
 
     Film update(Film film);
 
+<<<<<<< HEAD
+=======
+    void deleteFilm(Long id);
+
+>>>>>>> 00bdf08 (Отзывы)
     Film getFilmByID(Long id);
 
     List<Film> allFilms();
