@@ -31,8 +31,8 @@ public class ReviewService {
         reviewStorage.delete(reviewId);
     }
 
-    public Set<Review> getAllReviewsByCount(Integer count) {
-        return new HashSet<>(reviewStorage.getAllReviewsByCount(count));
+    public List<Review> getAllReviewsByCount(Integer count) {
+        return reviewStorage.getAllReviewsByCount(count);
     }
 
     public Review getReviewById(Long reviewId) {
