@@ -5,9 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.storage.dao.review.ReviewStorage;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @RequiredArgsConstructor
 @Service
