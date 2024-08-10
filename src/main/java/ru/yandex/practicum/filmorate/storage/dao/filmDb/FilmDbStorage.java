@@ -96,15 +96,6 @@ public class FilmDbStorage implements FilmStorageInterface {
     }
 
     @Override
-    public void deleteFilm(Long id) {
-        String deleteGenreSql = "DELETE FROM filmgenres WHERE film_id = ?";
-        jdbcTemplate.update(deleteGenreSql, id);
-        String sqlQuery = "DELETE FROM films WHERE film_id = ?;";
-        jdbcTemplate.update(sqlQuery, id);
-        log.info("Удаление фильма c id = {}", id);
-    }
-
-    @Override
     public Film getFilmByID(Long id) {
         log.info("Фильм с id = {} ", id);
         String sqlQuery = "SELECT * FROM films " +

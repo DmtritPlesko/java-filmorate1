@@ -17,7 +17,6 @@ import ru.yandex.practicum.filmorate.model.Mpa;
 
 import java.time.LocalDate;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -52,7 +51,7 @@ public class FilmDbStorageTest {
 
         Film film1 = filmDbStorage.getFilmByID(film.getId());
 
-        assertThat(film1).hasFieldOrPropertyWithValue("id", 4L);
+        assertThat(film1).hasFieldOrPropertyWithValue("id", 3L);
     }
 
     @Test

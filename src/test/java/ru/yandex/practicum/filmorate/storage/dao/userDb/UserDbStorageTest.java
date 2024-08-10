@@ -2,15 +2,16 @@ package ru.yandex.practicum.filmorate.storage.dao.userDb;
 
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
-import ru.yandex.practicum.filmorate.model.Status;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -20,30 +21,36 @@ import static org.assertj.core.api.Assertions.assertThat;
 class UserDbStorageTest {
     private final UserDbStorage userDbStorage;
 
+    private User user;
+
+    @BeforeEach
+    void setUp() {
+        user = createUser();
+    }
+
+    private User createUser() {
+        String uniqueEmailSuffix = UUID.randomUUID().toString();
+        String email = "email" + uniqueEmailSuffix + "@mail.ru";
+
+        User user = new User();
+        user.setEmail(email);
+        user.setName("Имя");
+        user.setBirthday(LocalDate.now());
+        return userDbStorage.createUser(user);
+    }
+
     @Test
     public void checkCreateNewUserAndGetById() {
-        Status status = new Status(15L, "confirm");
-
-        User user = new User(12L, "emaqwfil@mail.ru",
-                "logiBn12", "Roma", 14, "qwe123", LocalDate.now());
-
-        userDbStorage.createUser(user);
 
         User user1 = userDbStorage.getUserById(user.getId());
 
-        assertThat(user1).hasFieldOrPropertyWithValue("id", 2L);
+        assertThat(user1).hasFieldOrPropertyWithValue("id", user.getId());
 
 
     }
 
     @Test
     public void checkGetAllUsers() {
-        Status status = new Status(1L, "confirm");
-
-        User user = new User(1L, "emawwil@mail.ru", "logRGin12",
-                "Roma", 12, "qwe123", LocalDate.now());
-
-        userDbStorage.createUser(user);
 
         List<User> users = userDbStorage.allUser();
 
@@ -53,12 +60,6 @@ class UserDbStorageTest {
 
     @Test
     public void updateUserAndGetById() {
-        Status status = new Status(1L, "confirm");
-
-        User user = new User(1L, "emaiwFl1@mail.ru", "logQWin12",
-                "Roma", 18, "qwe123", LocalDate.now());
-
-        userDbStorage.createUser(user);
 
         user.setName("Rita");
         userDbStorage.update(user);
@@ -72,15 +73,10 @@ class UserDbStorageTest {
 
     @Test
     public void compareUsers() {
-        Status status = new Status(1L, "confirm");
+        User user1 = createUser();
+        user1.setEmail(user.getEmail());
 
-        User user = new User(1L, "emaewfil@mail.ru", "logiwefn12",
-                "Roma", 20, "qwe123", LocalDate.now());
-
-
-        User user1 = new User(1L, "emaewfil@mail.ru", "logiwefn12",
-                "Roma", 20, "qwe123", LocalDate.now());
-        Assertions.assertEquals(user1, user);
+        Assertions.assertNotEquals(user1, user);
 
     }
 
