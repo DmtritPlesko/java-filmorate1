@@ -93,6 +93,14 @@ public class UserDbStorage implements UserStorageInterface {
     }
 
     @Override
+    public void deleteUser(Long id) {
+        getUserById(id);
+        log.info("Удаление пользователся с id = {}", id);
+        String sqlQuery = "DELETE FROM users WHERE user_id = ?;";
+        jdbcTemplate.update(sqlQuery, id);
+    }
+
+    @Override
     public void deleteFriend(Long userId, Long friendId) {
         log.info("удаление пользователя");
         getUserById(userId);
