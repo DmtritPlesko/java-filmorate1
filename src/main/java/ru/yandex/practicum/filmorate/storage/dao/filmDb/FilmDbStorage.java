@@ -11,10 +11,10 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exeption.NotFoundException;
 import ru.yandex.practicum.filmorate.mappers.FilmRowMapper;
+import ru.yandex.practicum.filmorate.mappers.FilmsWithDirectorsMapper;
 import ru.yandex.practicum.filmorate.mappers.GenresMapper;
 import ru.yandex.practicum.filmorate.model.*;
 import ru.yandex.practicum.filmorate.storage.FilmStorageInterface;
-import ru.yandex.practicum.filmorate.storage.dao.genres.FilmGenresDbStorage;
 
 import java.sql.*;
 import java.sql.Date;
@@ -29,7 +29,6 @@ import java.util.*;
 public class FilmDbStorage implements FilmStorageInterface {
 
     private final JdbcTemplate jdbcTemplate;
-    private final FilmGenresDbStorage genresDbStorage;
 
     @Override
     public Film addNewFilm(Film film) {
@@ -68,6 +67,12 @@ public class FilmDbStorage implements FilmStorageInterface {
             }
         }
 
+        if (film.getDirectors() != null) {
+            String sqlInsertFilmDirectors = "INSERT INTO film_directors (film_id,director_id) VALUES (?,?)";
+            for (Director director : film.getDirectors()) {
+                jdbcTemplate.update(sqlInsertFilmDirectors, film.getId(), director.getId());
+            }
+        }
         return film;
     }
 
@@ -78,7 +83,7 @@ public class FilmDbStorage implements FilmStorageInterface {
                 "name = ?, " +
                 "description = ?, " +
                 "releaseDate = ?, " +
-                "duration = ? " + // Removed comma after duration
+                "duration = ? " +
                 "WHERE film_id = ?;";
         int temp = jdbcTemplate.update(sqlQuery,
                 film.getName(),
@@ -92,16 +97,6 @@ public class FilmDbStorage implements FilmStorageInterface {
         return film;
     }
 
-    @Override
-    public void deleteFilm(Long id) {
-        String deleteGenreSql = "DELETE FROM filmgenres WHERE film_id = ?";
-        jdbcTemplate.update(deleteGenreSql, id);
-        String sqlQuery = "DELETE FROM films WHERE film_id = ?;";
-        jdbcTemplate.update(sqlQuery, id);
-        log.info("Удаление фильма c id = {}", id);
-    }
-
-    @Override
     public Film getFilmByID(Long id) {
         log.info("Фильм с id = {} ", id);
         String sqlQuery = "SELECT * FROM films " +
@@ -123,7 +118,6 @@ public class FilmDbStorage implements FilmStorageInterface {
     @Override
     public List<Film> allFilms() {
         log.info("Список всех фильмов");
-
         String sqlQuery = "SELECT * FROM films " +
                 "LEFT JOIN mpa ON films.mpa_id = mpa.mpa_id " +
                 "LEFT JOIN filmgenres ON films.film_id = filmgenres.film_id " +
@@ -131,7 +125,6 @@ public class FilmDbStorage implements FilmStorageInterface {
                 "LEFT JOIN likes ON likes.film_id = films.film_id;";
         return jdbcTemplate.query(sqlQuery, FilmRowMapper::mapRow);
     }
-
 
     @Override
     public void takeLike(Long filmId, Long userId) {
@@ -144,7 +137,6 @@ public class FilmDbStorage implements FilmStorageInterface {
             return pr;
         });
     }
-
 
     @Override
     public void deleteLike(Long id, Long userId) {
@@ -162,4 +154,33 @@ public class FilmDbStorage implements FilmStorageInterface {
         return jdbcTemplate.query(sqlQuery, FilmRowMapper::mapRow, new Object[]{limit});
     }
 
+    @Override
+    public List<Film> getFilmBySort(Long id, List<String> sortBy) {
+
+        if (sortBy.get(0).equals("likes")) {
+            return sortByLikes(id);
+        } else if (sortBy.get(0).equals("year")) {
+            return sortByYears(id);
+        }
+        throw new IllegalArgumentException("Неизвестный метод сортировки");
+    }
+
+    private List<Film> sortByYears(Long id) {
+        String sqlQuery = "SELECT * FROM films " +
+                "INNER JOIN mpa ON mpa.mpa_id = films.mpa_id " +
+                "INNER JOIN film_directors ON film_directors.film_id = films.film_id " +
+                "WHERE director_id = ? " +
+                "ORDER BY EXTRACT(YEAR FROM CAST(RELEASEDATE AS DATE))";
+
+        return jdbcTemplate.query(sqlQuery, FilmsWithDirectorsMapper::filmAndDirectorMapper, id);
+    }
+
+    private List<Film> sortByLikes(Long id) {
+        String sqlQuery = "select * from films " +
+                "INNER JOIN mpa on mpa.mpa_id = films.mpa_id " +
+                "INNER JOIN film_directors ON film_directors.film_id = films.film_id " +
+                "WHERE films.film_id IN ( SELECT likes.film_id AS gg " +
+                "FROM likes GROUP BY (gg) ORDER BY (count(likes.user_id)) Desc ) AND film_directors.director_id = ?";
+        return jdbcTemplate.query(sqlQuery, FilmsWithDirectorsMapper::filmAndDirectorMapper, id);
+    }
 }
