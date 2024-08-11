@@ -10,7 +10,10 @@ import java.util.List;
 @RequiredArgsConstructor
 @Service
 public class ReviewService {
+    private final UserDbService userService;
+    private final FilmDbService filmDbService;
     private final ReviewStorage reviewStorage;
+
 
     public Review create(Review review) {
         reviewValidation(review);
@@ -40,6 +43,7 @@ public class ReviewService {
         if (filmId == null) {
             return reviewStorage.getAllReviewsByCount(count);
         } else {
+            filmDbService.getFilmById(filmId);
             return reviewStorage.getReviewsByFilmId(filmId, count);
         }
     }
@@ -47,24 +51,28 @@ public class ReviewService {
     public void addLike(Long reviewId, Long userId) {
         idValidation(reviewId);
         idValidation(userId);
+        userService.getUserById(userId);
         reviewStorage.addReaction(reviewId, userId, Boolean.TRUE);
     }
 
     public void addDislike(Long reviewId, Long userId) {
         idValidation(reviewId);
         idValidation(userId);
+        userService.getUserById(userId);
         reviewStorage.addReaction(reviewId, userId, Boolean.FALSE);
     }
 
     public void deleteLike(Long reviewId, Long userId) {
         idValidation(reviewId);
         idValidation(userId);
+        userService.getUserById(userId);
         reviewStorage.deleteReaction(reviewId, userId);
     }
 
     public void deleteDislike(Long reviewId, Long userId) {
         idValidation(reviewId);
         idValidation(userId);
+        userService.getUserById(userId);
         reviewStorage.deleteReaction(reviewId, userId);
     }
 
@@ -75,10 +83,10 @@ public class ReviewService {
         if (review.getIsPositive() == null) {
             throw new IllegalArgumentException("Необходимо оценить характер отзыва");
         }
-        if (review.getUserId() == null) {
+        if (review.getUserId() == null || userService.getUserById(review.getUserId()) == null) {
             throw new IllegalArgumentException("id юзера не может быть null");
         }
-        if (review.getFilmId() == null) {
+        if (review.getFilmId() == null || filmDbService.getFilmById(review.getFilmId()) == null) {
             throw new IllegalArgumentException("id фильма не может быть null");
         }
     }
