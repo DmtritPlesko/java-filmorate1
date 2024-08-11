@@ -23,9 +23,7 @@ public class ReviewService {
     }
 
     public void delete(Long reviewId) {
-        if (reviewId == null) {
-            throw new IllegalArgumentException("id отзыва не может быть null");
-        }
+        idValidation(reviewId);
         reviewStorage.delete(reviewId);
     }
 
@@ -34,9 +32,7 @@ public class ReviewService {
     }
 
     public Review getReviewById(Long reviewId) {
-        if (reviewId == null) {
-            throw new IllegalArgumentException("id отзыва не может быть null");
-        }
+        idValidation(reviewId);
         return reviewStorage.getReviewById(reviewId);
     }
 
@@ -49,44 +45,26 @@ public class ReviewService {
     }
 
     public void addLike(Long reviewId, Long userId) {
-        if (reviewId == null) {
-            throw new IllegalArgumentException("id отзыва не может быть null");
-        }
-        if (userId == null) {
-            throw new IllegalArgumentException("id юзера не может быть null");
-        }
-        deleteDislike(reviewId, userId);
+        idValidation(reviewId);
+        idValidation(userId);
         reviewStorage.addReaction(reviewId, userId, Boolean.TRUE);
     }
 
     public void addDislike(Long reviewId, Long userId) {
-        if (reviewId == null) {
-            throw new IllegalArgumentException("id отзыва не может быть null");
-        }
-        if (userId == null) {
-            throw new IllegalArgumentException("id юзера не может быть null");
-        }
-        deleteLike(reviewId, userId);
+        idValidation(reviewId);
+        idValidation(userId);
         reviewStorage.addReaction(reviewId, userId, Boolean.FALSE);
     }
 
     public void deleteLike(Long reviewId, Long userId) {
-        if (reviewId == null) {
-            throw new IllegalArgumentException("id отзыва не может быть null");
-        }
-        if (userId == null) {
-            throw new IllegalArgumentException("id юзера не может быть null");
-        }
+        idValidation(reviewId);
+        idValidation(userId);
         reviewStorage.deleteReaction(reviewId, userId);
     }
 
     public void deleteDislike(Long reviewId, Long userId) {
-        if (reviewId == null) {
-            throw new IllegalArgumentException("id отзыва не может быть null");
-        }
-        if (userId == null) {
-            throw new IllegalArgumentException("id юзера не может быть null");
-        }
+        idValidation(reviewId);
+        idValidation(userId);
         reviewStorage.deleteReaction(reviewId, userId);
     }
 
@@ -102,6 +80,12 @@ public class ReviewService {
         }
         if (review.getFilmId() == null) {
             throw new IllegalArgumentException("id фильма не может быть null");
+        }
+    }
+
+    private void idValidation(Long someId) {
+        if (someId == null) {
+            throw new IllegalArgumentException("id не может быть null");
         }
     }
 

@@ -25,9 +25,7 @@ public class ReviewStorageDB implements ReviewStorage {
     public Review create(Review review) {
         log.info("Добавление нового отзыва в бд");
 
-        if (review.getUseful() == null) {
-            review.setUseful(0L);
-        }
+        review.setUseful(0L);
 
         String sqlQuery = "INSERT INTO reviews (content, isPositive, user_id, film_id, useful) " +
                 "VALUES (?, ?, ?, ?, ?);";
