@@ -14,7 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/mpa")
 public class RatingController {
-    private RatingService ratingService;
+    private final RatingService ratingService;
 
     @Autowired
     public RatingController(RatingService ratingService) {

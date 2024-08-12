@@ -18,6 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class StatusStorageDb implements StatusDb {
     private final JdbcTemplate jdbcTemplate;
+    private final StatusMapper statusMapper;
 
     @Override
     public Status getStatusById(Long id) {
@@ -25,7 +26,7 @@ public class StatusStorageDb implements StatusDb {
         try {
             Status status = jdbcTemplate.queryForObject(sqlQuery,
                     new MapSqlParameterSource[]{new MapSqlParameterSource().addValue("id", id)},
-                    StatusMapper::mapRow);
+                    statusMapper);
             return status;
         } catch (EmptyResultDataAccessException e) {
             throw new NotFoundException("Статус с id = " + id + " не найден");
@@ -36,7 +37,7 @@ public class StatusStorageDb implements StatusDb {
     public List<Status> getAllStatus() {
         log.info("Пытаемся взять все статусы которые есть в базе");
         final String sqlQuery = "SELECT * FROM rating";
-        return new ArrayList<>(jdbcTemplate.query(sqlQuery, StatusMapper::mapRow));
+        return new ArrayList<>(jdbcTemplate.query(sqlQuery, statusMapper));
     }
 
 }
