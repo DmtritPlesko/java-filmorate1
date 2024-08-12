@@ -21,6 +21,8 @@ import java.util.List;
 @Component
 public class ReviewStorageDB implements ReviewStorage {
     private final JdbcTemplate jdbcTemplate;
+    private final String save = "INSERT INTO feeds (user_id, entity_id, event_type, operation, time_stamp) " +
+            "values (?, ?, ?, ?, ?)";
 
     @Override
     public Review create(Review review) {
@@ -44,6 +46,8 @@ public class ReviewStorageDB implements ReviewStorage {
 
             Number generatedKey = keyHolder.getKey();
             review.setReviewId(generatedKey.longValue());
+            jdbcTemplate.update(save, review.getUserId(), review.getReviewId(), "REVIEW", "ADD",
+                    LocalDateTime.now());
             return review;
         } catch (DataAccessException e) {
             log.error("Ошибка при добавлении отзыва: ", e);
@@ -61,6 +65,8 @@ public class ReviewStorageDB implements ReviewStorage {
                 review.getContent(),
                 review.getIsPositive(),
                 review.getReviewId());
+        jdbcTemplate.update(save, review.getUserId(), review.getReviewId(), "REVIEW", "UPDATE",
+                LocalDateTime.now());
         return getReviewById(review.getReviewId());
     }
 
@@ -72,6 +78,8 @@ public class ReviewStorageDB implements ReviewStorage {
 
         final String sqlQuery = "DELETE FROM reviews WHERE review_id = ?";
         jdbcTemplate.update(sqlQuery, reviewId);
+        jdbcTemplate.update(save, review.getUserId(), review.getReviewId(), "REVIEW", "REMOVE",
+                LocalDateTime.now());
     }
 
     @Override
