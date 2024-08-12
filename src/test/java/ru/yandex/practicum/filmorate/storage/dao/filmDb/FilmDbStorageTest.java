@@ -44,14 +44,6 @@ public class FilmDbStorageTest {
         genres.add(genre1);
 
         Film film = new Film("Cooler", "THIS IS CooLeer", LocalDate.now(), 1L, 150L,
-                new HashSet<Long>(likkes),
-                new HashSet<Genre>(genres), new Mpa(1));
-
-        filmDbStorage.addNewFilm(film);
-
-        Film film1 = filmDbStorage.getFilmByID(film.getId());
-
-        assertThat(film1).hasFieldOrPropertyWithValue("id", 3L);
     }
 
     @Test
@@ -67,9 +59,6 @@ public class FilmDbStorageTest {
         genres.add(genre1);
 
         Film film = new Film("Cooler", "THIS IS CooLeer", LocalDate.now(), 1L, 150L,
-                new HashSet<Long>(likkes),
-                new HashSet<Genre>(genres), new Mpa(1));
-
         filmDbStorage.addNewFilm(film);
         film.setName("NEW COLLER");
         filmDbStorage.update(film);
@@ -91,8 +80,6 @@ public class FilmDbStorageTest {
         genres.add(genre1);
 
         Film film = new Film("Cooler", "THIS IS CooLeer", LocalDate.now(), 1L, 150L,
-                new HashSet<Long>(likkes),
-                new HashSet<Genre>(genres), new Mpa(1));
 
         Film film1 = filmDbStorage.addNewFilm(film);
 

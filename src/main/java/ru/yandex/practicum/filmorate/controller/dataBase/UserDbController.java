@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.controller.dataBase;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserDbService;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -62,5 +62,10 @@ public class UserDbController {
     public Set<User> getMutualFriend(@PathVariable("id") Long userId,
                                      @PathVariable("otherId") Long otherId) {
         return userDbService.getMutualFriend(userId, otherId);
+    }
+
+    @GetMapping("/{id}/recommendations")
+    public Collection<Film> getRecommendations(@PathVariable("id") Long userId) {
+        return userDbService.getRecommendations(userId);
     }
 }

@@ -27,7 +27,7 @@ public class Film {
     String description;
 
     LocalDate releaseDate;
-
+    @EqualsAndHashCode.Include
     Long id;
 
     Long duration;
@@ -35,6 +35,8 @@ public class Film {
     Set<Long> likes;
 
     Set<Genre> genres;
+
+    Set<Director> directors;
 
     Mpa mpa;
 }

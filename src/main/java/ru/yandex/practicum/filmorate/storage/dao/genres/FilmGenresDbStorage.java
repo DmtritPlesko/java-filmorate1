@@ -14,20 +14,18 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FilmGenresDbStorage implements FilmGenres {
     private final JdbcTemplate jdbcTemplate;
+    private final GenresMapper genresMapper;
 
     @Override
     public Genre getGenresById(Long id) {
         log.info("Пытаемся взять жанр с id = {}", id);
         final String sqlQuery = "SELECT * FROM genres WHERE genre_id = ?;";
-        return jdbcTemplate.queryForObject(sqlQuery, new GenresMapper(), id);
-
     }
 
     @Override
     public List<Genre> getAllGenres() {
         log.info("Береём все жанры");
         final String sqlQuery = "SELECT * FROM genres;";
-        return jdbcTemplate.query(sqlQuery, new GenresMapper());
     }
 
 }

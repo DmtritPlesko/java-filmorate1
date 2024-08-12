@@ -1,6 +1,4 @@
 package ru.yandex.practicum.filmorate.controller.dataBase;
-
-import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,7 +18,6 @@ import java.util.List;
 @RequestMapping("/films")
 public class FilmDbController {
     private final FilmDbService filmService;
-
     @PostMapping
     public Film addFilm(@RequestBody Film film) {
         return filmService.addNewFilm(film);
@@ -54,7 +51,13 @@ public class FilmDbController {
     }
 
     @GetMapping("/popular")
-    public List<Film> getPopular(@RequestParam(defaultValue = "10") Long limit) {
-        return filmService.getPopularFilm(limit);
+    public List<Film> getPopular(@RequestParam(defaultValue = "10") Long count) {
+        return filmService.getPopularFilm(count);
+    }
+
+    @GetMapping("/director/{directorId}")
+    public List<Film> filmBySort(@PathVariable("directorId") Long id,
+                                 @RequestParam List<String> sortBy) {
+        return filmService.getFilmBySort(id, sortBy);
     }
 }

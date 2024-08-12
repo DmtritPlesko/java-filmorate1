@@ -19,9 +19,9 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@EqualsAndHashCode(onlyExplicitlyIncluded = false)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class User {
-
+    @EqualsAndHashCode.Include
     Long id;
 
     String email;
@@ -36,6 +36,8 @@ public class User {
 
     LocalDate birthday;
 
-    Status friend;
+//    Set<Long> friends;
+
+//    Status friend;
 
 }

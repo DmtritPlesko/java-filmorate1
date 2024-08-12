@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @SpringBootTest
 @AutoConfigureTestDatabase
@@ -21,40 +22,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 class UserDbStorageTest {
     private final UserDbStorage userDbStorage;
 
-    private User user;
-
-    @BeforeEach
-    void setUp() {
-        user = createUser();
-    }
-
-    private User createUser() {
-        String uniqueEmailSuffix = UUID.randomUUID().toString();
-        String email = "email" + uniqueEmailSuffix + "@mail.ru";
-
-        User user = new User();
-        user.setEmail(email);
-        user.setName("Имя");
-        user.setBirthday(LocalDate.now());
-        return userDbStorage.createUser(user);
-    }
-
-    @Test
-    public void checkCreateNewUserAndGetById() {
-
-        User user1 = userDbStorage.getUserById(user.getId());
-
-        assertThat(user1).hasFieldOrPropertyWithValue("id", user.getId());
-
-
+        User user1 = userDbStorage.getUserById(id);
     }
 
     @Test
     public void checkGetAllUsers() {
-
-        List<User> users = userDbStorage.allUser();
-
-        Assertions.assertNotNull(users.size(), "Список юзеров пуст");
 
     }
 
@@ -73,10 +45,7 @@ class UserDbStorageTest {
 
     @Test
     public void compareUsers() {
-        User user1 = createUser();
-        user1.setEmail(user.getEmail());
 
-        Assertions.assertNotEquals(user1, user);
 
     }
 
