@@ -15,9 +15,8 @@ import java.util.List;
 @Slf4j
 @Service
 public class FilmDbService {
-    private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-    private FilmStorageInterface filmStorage;
-
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+    private final FilmStorageInterface filmStorage;
 
     @Autowired
     public FilmDbService(FilmDbStorage filmDbStorage) {
@@ -43,6 +42,9 @@ public class FilmDbService {
         return filmStorage.getPopularFilm(limit);
     }
 
+    public List<Film> getFilmBySort(Long id, List<String> sortBy) {
+        return filmStorage.getFilmBySort(id, sortBy);
+    }
 
     //update
     public Film updateFilm(Film film) {
