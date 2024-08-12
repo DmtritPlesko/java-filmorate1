@@ -90,7 +90,6 @@ public class UserDbStorage implements UserStorageInterface {
         log.info("Добавление нового друга");
         jdbcTemplate.update("INSERT INTO friends (user_id, friend_id, status) VALUES (?, ?, ?)", +
                 userId, friendId, "unconfirmed");
-
     }
 
     @Override
@@ -109,7 +108,6 @@ public class UserDbStorage implements UserStorageInterface {
         log.info("пользователь с id = {} удалил друга с id = {}", userId, friendId);
         final String sqlQuery = "DELETE FROM friends WHERE user_id = ? AND friend_id = ?";
         jdbcTemplate.update(sqlQuery, userId, friendId);
-
     }
 
     @Override
@@ -144,5 +142,4 @@ public class UserDbStorage implements UserStorageInterface {
                 userId,
                 friendId));
     }
-
 }

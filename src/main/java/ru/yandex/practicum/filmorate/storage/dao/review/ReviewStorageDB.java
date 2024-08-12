@@ -13,6 +13,7 @@ import ru.yandex.practicum.filmorate.model.Review;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -60,12 +61,12 @@ public class ReviewStorageDB implements ReviewStorage {
                 review.getContent(),
                 review.getIsPositive(),
                 review.getReviewId());
-
         return getReviewById(review.getReviewId());
     }
 
     @Override
     public void delete(Long reviewId) {
+        Review review = getReviewById(reviewId);
         log.info("Удаление отзыва с id: {}", reviewId);
         getReviewById(reviewId);
 
