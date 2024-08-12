@@ -20,5 +20,5 @@ public interface FilmStorageInterface {
 
     List<Film> getPopularFilm(Long limit);
 
-    List<Film> getFilmBySort(Long id,List<String> sortBy);
+    List<Film> getFilmBySort(Long id, List<String> sortBy);
 }

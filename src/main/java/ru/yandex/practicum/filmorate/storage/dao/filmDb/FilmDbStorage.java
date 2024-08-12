@@ -276,7 +276,7 @@ public class FilmDbStorage implements FilmStorageInterface {
 
     private List<Film> sortByYears(Long id) {
         String sqlQuery = "SELECT f.*, l.user_id, fg.genre_id, g.name_genres AS genre_name, m.mpa_name," +
-        "d.director_id, dir.director_name FROM films f " +
+                "d.director_id, dir.director_name FROM films f " +
                 "LEFT JOIN likes l ON f.film_id = l.film_id " +
                 "LEFT JOIN filmgenres fg ON f.film_id = fg.film_id " +
                 "LEFT JOIN genres g ON fg.genre_id = g.genre_id " +
