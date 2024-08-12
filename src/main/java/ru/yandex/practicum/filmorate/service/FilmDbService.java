@@ -5,22 +5,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exeption.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.storage.dao.filmDb.FilmDbStorage;
 import ru.yandex.practicum.filmorate.storage.FilmStorageInterface;
+import ru.yandex.practicum.filmorate.storage.dao.filmDb.FilmDbStorage;
 
-import javax.sound.midi.Soundbank;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 public class FilmDbService {
-    private FilmStorageInterface filmStorage;
-    private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+    private final FilmStorageInterface filmStorage;
 
     @Autowired
     public FilmDbService(FilmDbStorage filmDbStorage) {
@@ -46,6 +42,9 @@ public class FilmDbService {
         return filmStorage.getPopularFilm(limit);
     }
 
+    public List<Film> getFilmBySort(Long id, List<String> sortBy) {
+        return filmStorage.getFilmBySort(id, sortBy);
+    }
 
     //update
     public Film updateFilm(Film film) {
@@ -58,10 +57,6 @@ public class FilmDbService {
     }
 
     //delete
-    public void deleteFilmById(Long id) {
-        filmStorage.deleteFilm(id);
-    }
-
     public void deleteLike(Long id, Long userId) {
         filmStorage.deleteLike(id, userId);
     }
