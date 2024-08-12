@@ -368,5 +368,6 @@ public class FilmDbStorage implements FilmStorageInterface {
                 "WHERE user_id = ? AND (SELECT film_id FROM likes WHERE user_id = ?))" +
                 "LIMIT 1";
         return jdbcTemplate.query(request1, new FilmRowMapper(), userId, friendId);
+        //
     }
 }
