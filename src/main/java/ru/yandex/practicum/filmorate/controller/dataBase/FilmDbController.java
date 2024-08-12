@@ -69,4 +69,9 @@ public class FilmDbController {
                                  @RequestParam List<String> sortBy) {
         return filmService.getFilmBySort(id, sortBy);
     }
+
+    @GetMapping("/common")
+    public List<Film> getCommonFilms(@RequestParam long userId, @RequestParam long friendId) {
+        return filmService.getCommonFilms(userId, friendId);
+    }
 }
