@@ -13,6 +13,7 @@ import ru.yandex.practicum.filmorate.model.Review;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -20,6 +21,8 @@ import java.util.List;
 @Component
 public class ReviewStorageDB implements ReviewStorage {
     private final JdbcTemplate jdbcTemplate;
+    private final String save = "INSERT INTO feeds (user_id, entity_id, event_type, operation, time_stamp) " +
+            "values (?, ?, ?, ?, ?)";
 
     @Override
     public Review create(Review review) {
@@ -43,6 +46,8 @@ public class ReviewStorageDB implements ReviewStorage {
 
             Number generatedKey = keyHolder.getKey();
             review.setReviewId(generatedKey.longValue());
+            jdbcTemplate.update(save, review.getUserId(), review.getReviewId(), "REVIEW", "ADD",
+                    LocalDateTime.now());
             return review;
         } catch (DataAccessException e) {
             log.error("Ошибка при добавлении отзыва: ", e);
@@ -60,17 +65,21 @@ public class ReviewStorageDB implements ReviewStorage {
                 review.getContent(),
                 review.getIsPositive(),
                 review.getReviewId());
-
+        jdbcTemplate.update(save, review.getUserId(), review.getReviewId(), "REVIEW", "UPDATE",
+                LocalDateTime.now());
         return getReviewById(review.getReviewId());
     }
 
     @Override
     public void delete(Long reviewId) {
+        Review review = getReviewById(reviewId);
         log.info("Удаление отзыва с id: {}", reviewId);
         getReviewById(reviewId);
 
         final String sqlQuery = "DELETE FROM reviews WHERE review_id = ?";
         jdbcTemplate.update(sqlQuery, reviewId);
+        jdbcTemplate.update(save, review.getUserId(), review.getReviewId(), "REVIEW", "REMOVE",
+                LocalDateTime.now());
     }
 
     @Override

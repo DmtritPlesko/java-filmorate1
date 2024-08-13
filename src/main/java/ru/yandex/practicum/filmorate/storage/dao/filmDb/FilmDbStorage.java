@@ -19,6 +19,7 @@ import ru.yandex.practicum.filmorate.storage.FilmStorageInterface;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -35,6 +36,8 @@ public class FilmDbStorage implements FilmStorageInterface {
 
     private final JdbcTemplate jdbcTemplate;
     private final FilmRowMapper filmRowMapper;
+    private final String save = "INSERT INTO feeds (user_id, entity_id, event_type, operation, time_stamp) " +
+            "values (?, ?, ?, ?, ?)";
 
     @Override
     public Film addNewFilm(Film film) {
@@ -205,6 +208,7 @@ public class FilmDbStorage implements FilmStorageInterface {
             PreparedStatement pr = con.prepareStatement(sqlQuery);
             pr.setLong(1, filmId);
             pr.setLong(2, userId);
+            jdbcTemplate.update(save, userId, filmId, "LIKE", "ADD", LocalDateTime.now());
             return pr;
         });
     }
@@ -214,6 +218,7 @@ public class FilmDbStorage implements FilmStorageInterface {
         log.info("Пользователь с id = {} убрал лайк с фильму с id = {}", userId, id);
         final String sqlQuery = "DELETE FROM likes WHERE film_id = ? AND user_id = ?";
         jdbcTemplate.update(sqlQuery, id, userId);
+        jdbcTemplate.update(save, userId, id, "LIKE", "REMOVE", LocalDateTime.now());
     }
 
     @Override

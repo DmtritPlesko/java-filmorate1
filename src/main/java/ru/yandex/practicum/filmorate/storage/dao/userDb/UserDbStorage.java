@@ -10,13 +10,16 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exeption.NotFoundException;
+import ru.yandex.practicum.filmorate.mappers.FeedRowMapper;
 import ru.yandex.practicum.filmorate.mappers.UserRowMapper;
+import ru.yandex.practicum.filmorate.model.Feed;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorageInterface;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -29,6 +32,8 @@ import java.util.Set;
 public class UserDbStorage implements UserStorageInterface {
     private final JdbcTemplate jdbcTemplate;
     private final UserRowMapper userRowMapper;
+    private final String save = "INSERT INTO feeds (user_id, entity_id, event_type, operation, time_stamp) " +
+            "values (?, ?, ?, ?, ?)";
 
     @Override
     public User createUser(User user) {
@@ -90,7 +95,7 @@ public class UserDbStorage implements UserStorageInterface {
         log.info("Добавление нового друга");
         jdbcTemplate.update("INSERT INTO friends (user_id, friend_id, status) VALUES (?, ?, ?)", +
                 userId, friendId, "unconfirmed");
-
+        jdbcTemplate.update(save, userId, friendId, "FRIEND", "ADD", LocalDateTime.now());
     }
 
     @Override
@@ -109,7 +114,7 @@ public class UserDbStorage implements UserStorageInterface {
         log.info("пользователь с id = {} удалил друга с id = {}", userId, friendId);
         final String sqlQuery = "DELETE FROM friends WHERE user_id = ? AND friend_id = ?";
         jdbcTemplate.update(sqlQuery, userId, friendId);
-
+        jdbcTemplate.update(save, userId, friendId, "FRIEND", "REMOVE", LocalDateTime.now());
     }
 
     @Override
@@ -143,6 +148,11 @@ public class UserDbStorage implements UserStorageInterface {
                 userRowMapper,
                 userId,
                 friendId));
+    }
+
+    public List<Feed> getFeed(Long userId) {
+        String request = "SELECT * FROM feeds WHERE user_id = ?";
+        return jdbcTemplate.query(request, FeedRowMapper::mapRow, userId);
     }
 
 }

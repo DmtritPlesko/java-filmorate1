@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exeption.ValidationException;
+import ru.yandex.practicum.filmorate.model.Feed;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorageInterface;
@@ -112,6 +113,10 @@ public class UserDbService {
             }
         }
         return userFavouritesFilms;
+    }
+
+    public List<Feed> getFeed(Long userId) {
+        return userStorage.getFeed(userId);
     }
 
     private void validation(User user) {

@@ -88,3 +88,11 @@ CREATE TABLE IF NOT EXISTS review_likes (
     is_useful BOOLEAN,
     CONSTRAINT review_likes_pk PRIMARY KEY (review_id, user_id)
 );
+
+CREATE TABLE IF NOT EXISTS FEEDS (
+user_id INTEGER REFERENCES users (user_id),
+entity_id integer,
+event_type varchar(200),
+operation varchar(200),
+time_stamp TIMESTAMP
+);
