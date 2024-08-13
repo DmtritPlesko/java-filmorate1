@@ -229,7 +229,7 @@ public class FilmDbStorage implements FilmStorageInterface {
                 "LEFT JOIN genres g ON fg.genre_id = g.genre_id " +
                 "LEFT JOIN film_directors d on f.film_id = d.film_id " +
                 "LEFT JOIN directors dir on dir.director_id = d.director_id " +
-                "%s " + 
+                "%s " +
                 "GROUP BY f.film_id, m.mpa_name, l.user_id, fg.genre_id, g.name_genres, " +
                 "d.director_id, dir.director_name " +
                 "ORDER BY like_count DESC " +
