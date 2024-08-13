@@ -203,7 +203,7 @@ public class FilmDbStorage implements FilmStorageInterface {
     @Override
     public void deleteFilmByID(Long id) {
         log.info("Удаление фильма с id = {}", id);
-        jdbcTemplate.update("DELETE FROM filmgenres WHERE film_id = ?", id);
+        jdbcTemplate.update("DELETE FROM film_genres WHERE film_id = ?", id);
         jdbcTemplate.update("DELETE FROM films WHERE film_id = ?", id);
     }
 
