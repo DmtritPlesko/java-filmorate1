@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.controller.dataBase;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -68,5 +69,11 @@ public class FilmDbController {
     public List<Film> filmBySort(@PathVariable("directorId") Long id,
                                  @RequestParam List<String> sortBy) {
         return filmService.getFilmBySort(id, sortBy);
+    }
+
+    @GetMapping("/search")
+    public List<Film> search(@RequestParam @NotBlank String query,
+                             @RequestParam(required = false, defaultValue = "title") String by) {
+        return filmService.search(query, by);
     }
 }

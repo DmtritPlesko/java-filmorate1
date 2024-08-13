@@ -28,7 +28,7 @@ public class FilmRowMapper implements RowMapper<Film> {
                 .name(rs.getString("name"))
                 .description(rs.getString("description"))
                 .duration(rs.getLong("duration"))
-                .releaseDate(rs.getDate("releaseDate").toLocalDate())
+                .releaseDate(rs.getDate("release_date").toLocalDate())
                 .mpa(mpa)
                 .likes(likes)
                 .genres(genres)
@@ -45,7 +45,8 @@ public class FilmRowMapper implements RowMapper<Film> {
         }
 
         if (Objects.nonNull(rs.getString("director_id"))) {
-            Director director = new Director(rs.getLong("director_id"), rs.getString("director_name"));
+            Director director = new Director(rs.getLong("director_id"),
+                    rs.getString("director_name"));
             directors.add(director);
         }
 
