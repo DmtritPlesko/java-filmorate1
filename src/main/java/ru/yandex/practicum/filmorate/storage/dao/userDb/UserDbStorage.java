@@ -154,5 +154,4 @@ public class UserDbStorage implements UserStorageInterface {
         String request = "SELECT * FROM feeds WHERE user_id = ?";
         return jdbcTemplate.query(request, FeedRowMapper::mapRow, userId);
     }
-
 }
