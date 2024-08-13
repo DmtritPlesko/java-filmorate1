@@ -11,12 +11,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ImportResource;
+import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
+import ru.yandex.practicum.filmorate.storage.dao.directorDb.DirectorDbStorage;
 
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,6 +32,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class FilmDbStorageTest {
     FilmDbStorage filmDbStorage;
+    DirectorDbStorage directorDbStorage;
 
     @Test
     public void testAddFilmAndGet() {
@@ -97,5 +101,49 @@ public class FilmDbStorageTest {
         Film film1 = filmDbStorage.addNewFilm(film);
 
         Assertions.assertEquals(film1, film);
+    }
+
+    @Test
+    public void getMostPopularShouldSuccessfullyCreateThreeFilmsAndGetMostPopularTest() {
+        final Set<Long> likes1 = new HashSet<>();
+        likes1.add(1L);
+        likes1.add(2L);
+
+        final Set<Long> likes2 = new HashSet<>();
+        likes1.add(1L);
+
+        final Genre genre = new Genre(1L, "Комедия");
+        final Genre genre1 = new Genre(2L, "Драма");
+        final Set<Genre> genres = new HashSet<>();
+        genres.add(genre);
+        genres.add(genre1);
+
+        final Set<Director> directors = new HashSet<>();
+        final Director director = new Director(1L, "Test");
+        directorDbStorage.createNewDirector(director);
+
+        directors.add(director);
+
+        final Film firstFilmForTest = new Film("Cooler", "THIS IS CooLeer", LocalDate.now(), 1L, 150L,
+                new HashSet<>(likes2),
+                new HashSet<>(genres), new HashSet<>(directors), new Mpa(1));
+
+
+        final Film secondFilmForTest = new Film("Cooler", "THIS IS CooLeer", LocalDate.now(), 2L, 150L,
+                new HashSet<>(likes2),
+                new HashSet<>(genres), new HashSet<>(directors), new Mpa(1));
+
+        final Film thirdFilmForTest = new Film("Cooler", "THIS IS CooLeer", LocalDate.now(), 3L, 150L,
+                new HashSet<>(likes1),
+                new HashSet<>(genres), new HashSet<>(directors), new Mpa(1));
+
+        filmDbStorage.addNewFilm(firstFilmForTest);
+        filmDbStorage.addNewFilm(secondFilmForTest);
+        filmDbStorage.addNewFilm(thirdFilmForTest);
+
+        final List<Film> mostPopularFilmsByGenreIdAndYearFromDB = filmDbStorage.getMostPopular(
+                3L, 2L, 2024);
+
+        Assertions.assertNotNull(mostPopularFilmsByGenreIdAndYearFromDB);
     }
 }
