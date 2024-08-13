@@ -90,7 +90,7 @@ CREATE TABLE IF NOT EXISTS review_likes (
 );
 
 CREATE TABLE IF NOT EXISTS feeds (
-user_id INTEGER REFERENCES users (user_id),
+user_id INTEGER REFERENCES users (user_id) ON DELETE CASCADE,
 entity_id integer,
 event_type varchar(200),
 operation varchar(200),
