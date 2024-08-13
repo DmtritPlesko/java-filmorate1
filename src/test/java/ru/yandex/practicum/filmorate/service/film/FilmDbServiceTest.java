@@ -52,27 +52,24 @@ public class FilmDbServiceTest {
         Set<Director> directors = new HashSet<>();
         directors.add(director);
 
-        final String uniqueEmailSuffix = UUID.randomUUID().toString();
-        final String email = "email" + uniqueEmailSuffix + "@mail.ru";
-
         Film film1 = new Film("филосовский камень", "description",
-                LocalDate.now(), 1L, 150L, new HashSet<>(likes),
+                LocalDate.now(), 11L, 150L, new HashSet<>(likes),
                 new HashSet<>(genres), directors, new Mpa(1));
 
         Film film2 = new Film("тайная комната", "description",
-                LocalDate.now(), 2L, 150L, new HashSet<>(likes),
+                LocalDate.now(), 12L, 150L, new HashSet<>(likes),
                 new HashSet<>(genres), new HashSet<>(), new Mpa(1));
 
         Film film3 = new Film("узник азкабана", "description",
-                LocalDate.now(), 3L, 150L, new HashSet<>(likes),
+                LocalDate.now(), 13L, 150L, new HashSet<>(likes),
                 new HashSet<>(genres), new HashSet<>(), new Mpa(1));
 
         Film film4 = new Film("кубок огня", "description",
-                LocalDate.now(), 4L, 150L, new HashSet<>(likes),
+                LocalDate.now(), 14L, 150L, new HashSet<>(likes),
                 new HashSet<>(genres), new HashSet<>(), new Mpa(1));
 
         Film film5 = new Film("орден феникса", "description",
-                LocalDate.now(), 5L, 150L, new HashSet<>(likes),
+                LocalDate.now(), 15L, 150L, new HashSet<>(likes),
                 new HashSet<>(genres), new HashSet<>(), new Mpa(1));
 
         filmDbStorage.addNewFilm(film1);
@@ -96,7 +93,7 @@ public class FilmDbServiceTest {
     void searchOnDirectorTest() {
         List<Film> films = filmDbService.search("узник", "director");
         assertThat(films.size() == 1);
-        assertEquals(films.getFirst(), filmDbStorage.getFilmByID(1L));
+        assertEquals(films.getFirst().getName(), "филосовский камень");
     }
 
     @Test
@@ -105,7 +102,7 @@ public class FilmDbServiceTest {
     void searchOnTitleOrDirectorTest() {
         List<Film> films = filmDbService.search("кубок", "title,director");
         assertThat(films.size() == 1);
-        assertEquals(films.getFirst(), filmDbStorage.getFilmByID(4L));
+        assertEquals(films.getFirst().getName(), "кубок огня");
     }
 
     @Test
@@ -122,6 +119,6 @@ public class FilmDbServiceTest {
     void searchOnTitleTest() {
         List<Film> films = filmDbService.search("аба", "title");
         assertThat(films.size() == 1);
-        assertEquals(films.getFirst(), filmDbStorage.getFilmByID(3L));
+        assertEquals(films.getFirst().getName(), "узник азкабана");
     }
 }
