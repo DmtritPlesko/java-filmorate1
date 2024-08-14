@@ -229,10 +229,9 @@ public class FilmDbStorage implements FilmStorageInterface {
     }
 
     @Override
-    public List<Film> getPopularFilm(Long limit) {
+    public List<Film> getMostPopular(Long count, Long genreId, Integer year) {
         log.info("Популярные фильмы");
-
-        String sqlQuery = "SELECT f.*, m.mpa_name, l.user_id, fg.genre_id, g.genre_name, " +
+        final String sqlQuery = "SELECT f.*, m.mpa_name, l.user_id, fg.genre_id, g.genre_name, " +
                 "d.director_id, dir.director_name, COUNT(l.user_id) AS like_count " +
                 "FROM films f " +
                 "INNER JOIN mpa m ON f.mpa_id = m.mpa_id " +
@@ -241,13 +240,32 @@ public class FilmDbStorage implements FilmStorageInterface {
                 "LEFT JOIN genres g ON fg.genre_id = g.genre_id " +
                 "LEFT JOIN film_directors d on f.film_id = d.film_id " +
                 "LEFT JOIN directors dir on dir.director_id = d.director_id " +
-                "GROUP BY f.film_id, m.mpa_name, l.user_id, fg.genre_id, g.genre_name, d.director_id, dir.director_name " +
+                "%s " +
+                "GROUP BY f.film_id, m.mpa_name, l.user_id, fg.genre_id, g.genre_name, " +
+                "d.director_id, dir.director_name " +
                 "ORDER BY like_count DESC " +
                 "LIMIT ?";
 
+        String condition = " ";
+        List<Object> params = new ArrayList<>();
+        if (genreId != null) {
+            condition = condition + "WHERE fg.genre_id = ?";
+            params.add(genreId);
+        }
+        if (genreId != null && year != null) {
+            condition = condition + "AND YEAR(f.release_date) = ?";
+            params.add(year);
+        }
+        if (genreId == null && year != null) {
+            condition = condition + "WHERE YEAR(f.release_date) = ?";
+            params.add(year);
+        }
+        params.add(count);
+        String sql = String.format(sqlQuery, condition);
+
         Map<Long, Film> filmMap = new LinkedHashMap<>();
 
-        jdbcTemplate.query(sqlQuery, rs -> {
+        jdbcTemplate.query(sql, rs -> {
             Long filmId = rs.getLong("film_id");
             Film film = filmMap.get(filmId);
             if (film == null) {
@@ -269,9 +287,7 @@ public class FilmDbStorage implements FilmStorageInterface {
                 film.getDirectors().add(director);
 
             }
-        }, limit);
-
-        // Преобразуем в список и сортируем по количеству лайков
+        }, params.toArray());
         List<Film> films = new ArrayList<>(filmMap.values());
         films.sort((f1, f2) -> Long.compare(f2.getLikes().size(), f1.getLikes().size()));
 

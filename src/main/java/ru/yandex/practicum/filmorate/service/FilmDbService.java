@@ -39,8 +39,8 @@ public class FilmDbService {
         return filmStorage.allFilms();
     }
 
-    public List<Film> getPopularFilm(Long limit) {
-        return filmStorage.getPopularFilm(limit);
+    public List<Film> getMostPopular(Long count, Long genreId, Integer year) {
+        return filmStorage.getMostPopular(count, genreId, year);
     }
 
     public List<Film> getFilmBySort(Long id, List<String> sortBy) {

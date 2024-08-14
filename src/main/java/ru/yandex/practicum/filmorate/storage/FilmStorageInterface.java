@@ -20,7 +20,7 @@ public interface FilmStorageInterface {
 
     void deleteLike(Long id, Long userId);
 
-    List<Film> getPopularFilm(Long limit);
+    List<Film> getMostPopular(Long count, Long genreId, Integer year);
 
     List<Film> getFilmBySort(Long id, List<String> sortBy);
 
