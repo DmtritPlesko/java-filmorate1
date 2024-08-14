@@ -13,6 +13,8 @@ import ru.yandex.practicum.filmorate.exeption.NotFoundException;
 import ru.yandex.practicum.filmorate.mappers.UserRowMapper;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorageInterface;
+import ru.yandex.practicum.filmorate.mappers.FeedRowMapper;
+import ru.yandex.practicum.filmorate.model.Feed;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -148,4 +150,9 @@ public class UserDbStorage implements UserStorageInterface {
                 friendId));
     }
 
+    //добавление событий
+    public List<Feed> getFeed(Long userId) {
+        String request = "SELECT * FROM feeds WHERE user_id = ?";
+        return jdbcTemplate.query(request, FeedRowMapper::mapRow, userId);
+    }
 }
