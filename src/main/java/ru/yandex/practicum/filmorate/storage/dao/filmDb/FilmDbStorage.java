@@ -20,11 +20,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @Slf4j
@@ -368,5 +364,20 @@ public class FilmDbStorage implements FilmStorageInterface {
             }
         }, id);
         return new ArrayList<>(filmMap.values());
+    }
+
+    public List<Film> getCommonFilms(Long userId, Long friendId) {
+        String request1 = "SELECT f.*, l.user_id, fg.genre_id, g.name_genres AS genre_name, m.mpa_name, d.director_id, dir.director_name FROM films f " +
+                "LEFT JOIN likes l ON f.film_id = l.film_id " +
+                "LEFT JOIN filmgenres fg ON f.film_id = fg.film_id " +
+                "LEFT JOIN genres g ON fg.genre_id = g.genre_id " +
+                "LEFT JOIN mpa m ON f.mpa_id = m.mpa_id " +
+                "LEFT JOIN film_directors d on f.film_id = d.film_id " +
+                "LEFT JOIN directors dir on dir.director_id = d.director_id " +
+                "WHERE f.film_id IN (SELECT film_id FROM likes " +
+                "WHERE user_id = ? OR user_id = ?)" +
+                "GROUP BY f.film_id, m.mpa_name, l.user_id, fg.genre_id, g.name_genres, d.director_id, dir.director_name";
+        return jdbcTemplate.query(request1, new FilmRowMapper(), userId, friendId);
+        //
     }
 }

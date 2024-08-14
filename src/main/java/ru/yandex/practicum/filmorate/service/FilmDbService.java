@@ -95,6 +95,10 @@ public class FilmDbService {
         filmStorage.deleteFilmByID(id);
     }
 
+    public List<Film> getCommonFilms(long userId, long friendId) {
+        return filmStorage.getCommonFilms(userId, friendId);
+    }
+
     private void checkValidation(Film film) {
         if (film.getName().isBlank()) {
             log.error("Название не может быть пустым");
