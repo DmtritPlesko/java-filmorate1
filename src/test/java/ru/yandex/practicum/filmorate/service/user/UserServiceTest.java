@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.FilmDbService;
 import ru.yandex.practicum.filmorate.service.UserDbService;
 import ru.yandex.practicum.filmorate.storage.dao.filmDb.FilmDbStorage;
 import ru.yandex.practicum.filmorate.storage.dao.userDb.UserDbStorage;
@@ -27,6 +28,7 @@ public class UserServiceTest {
     private final UserDbStorage userDbStorage;
     private final FilmDbStorage filmDbStorage;
     private final UserDbService userDbService;
+    private final FilmDbService filmDbService;
 
 
     @Test
@@ -78,8 +80,8 @@ public class UserServiceTest {
         filmOneLike.setId(idOneLike);
         filmDbStorage.takeLike(idOneLike, twoId);
 
-        assertThat(userDbService.getRecommendations(oneId)).hasSize(1);
-        assertTrue(userDbService.getRecommendations(oneId).contains(filmOneLike));
+        assertThat(filmDbService.getRecommendations(oneId)).hasSize(1);
+        assertTrue(filmDbService.getRecommendations(oneId).contains(filmOneLike));
     }
 
     @Test
@@ -130,7 +132,7 @@ public class UserServiceTest {
         filmOneLike.setId(idOneLike);
         filmDbStorage.takeLike(idOneLike, twoId);
 
-        assertThat(userDbService.getRecommendations(oneId)).hasSize(0);
-        assertThat(userDbService.getRecommendations(twoId)).hasSize(0);
+        assertThat(filmDbService.getRecommendations(oneId)).hasSize(0);
+        assertThat(filmDbService.getRecommendations(twoId)).hasSize(0);
     }
 }

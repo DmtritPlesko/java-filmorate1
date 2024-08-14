@@ -43,10 +43,12 @@ class ReviewStorageDBTest {
     private User createUser() {
         final String uniqueEmailSuffix = UUID.randomUUID().toString();
         final String email = "email" + uniqueEmailSuffix + "@mail.ru";
+        final String login = "Login" + uniqueEmailSuffix;
 
         final User user = new User();
         user.setEmail(email);
         user.setName("Имя");
+        user.setLogin(login);
         user.setBirthday(LocalDate.now());
         return userStorage.createUser(user);
     }

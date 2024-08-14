@@ -14,6 +14,7 @@ import ru.yandex.practicum.filmorate.mappers.FilmRowMapper;
 import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.FilmStorageInterface;
 
 import java.sql.Date;
@@ -176,10 +177,10 @@ public class FilmDbStorage implements FilmStorageInterface {
         jdbcTemplate.query(sqlQuery, rs -> {
             Long filmId = rs.getLong("film_id");
             Film film = filmMap.get(filmId);
-            if (film == null) {
-                film = filmRowMapper.mapRow(rs, rs.getRow());
-                filmMap.put(filmId, film);
-            }
+                if (film == null) {
+                    film = filmRowMapper.mapRow(rs, rs.getRow());
+                    filmMap.put(filmId, film);
+                }
             // Добавляем лайки и жанры
             if (rs.getLong("user_id") != 0) {
                 film.getLikes().add(rs.getLong("user_id"));
@@ -193,7 +194,10 @@ public class FilmDbStorage implements FilmStorageInterface {
                         rs.getLong("director_id"),
                         rs.getString("director_name"));
                 film.getDirectors().add(director);
-
+            }
+            if (rs.getLong("mpa_id") != 0) {
+                Mpa mpa = new Mpa(rs.getInt("mpa_id"),
+                        rs.getString("mpa_name"));
             }
         });
 

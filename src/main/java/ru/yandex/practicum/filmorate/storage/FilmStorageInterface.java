@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.storage;
 
 import ru.yandex.practicum.filmorate.model.Film;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface FilmStorageInterface {
@@ -25,4 +26,5 @@ public interface FilmStorageInterface {
     List<Film> getFilmBySort(Long id, List<String> sortBy);
 
     List<Film> getCommonFilms(Long userId, Long friendId);
+
 }

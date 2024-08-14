@@ -1,5 +1,7 @@
 package ru.yandex.practicum.filmorate.model;
 
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,6 +30,7 @@ public class Film {
 
     LocalDate releaseDate;
     @EqualsAndHashCode.Include
+    @PositiveOrZero
     Long id;
 
     Long duration;

@@ -152,6 +152,7 @@ public class UserDbStorage implements UserStorageInterface {
 
     //добавление событий
     public List<Feed> getFeed(Long userId) {
+        getUserById(userId);
         String request = "SELECT * FROM feeds WHERE user_id = ?";
         return jdbcTemplate.query(request, FeedRowMapper::mapRow, userId);
     }

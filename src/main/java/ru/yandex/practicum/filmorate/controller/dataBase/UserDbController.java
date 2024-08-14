@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.yandex.practicum.filmorate.model.Feed;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.FilmDbService;
 import ru.yandex.practicum.filmorate.service.UserDbService;
 
 import java.util.Collection;
@@ -22,10 +23,12 @@ import java.util.Set;
 @RequestMapping("/users")
 public class UserDbController {
     private final UserDbService userDbService;
+    private final FilmDbService filmDbService;
 
     @Autowired
-    public UserDbController(UserDbService userDbService) {
+    public UserDbController(UserDbService userDbService, FilmDbService filmDbService) {
         this.userDbService = userDbService;
+        this.filmDbService = filmDbService;
     }
 
     @GetMapping("/{id}")
@@ -78,7 +81,7 @@ public class UserDbController {
 
     @GetMapping("/{id}/recommendations")
     public Collection<Film> getRecommendations(@PathVariable("id") Long userId) {
-        return userDbService.getRecommendations(userId);
+        return filmDbService.getRecommendations(userId);
     }
 
     @GetMapping("{userId}/feed")
