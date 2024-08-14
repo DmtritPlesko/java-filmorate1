@@ -3,24 +3,21 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exeption.NotFoundException;
 import ru.yandex.practicum.filmorate.exeption.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.storage.dao.filmDb.FilmDbStorage;
 import ru.yandex.practicum.filmorate.storage.FilmStorageInterface;
+import ru.yandex.practicum.filmorate.storage.dao.filmDb.FilmDbStorage;
 
-import javax.sound.midi.Soundbank;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 public class FilmDbService {
-    private FilmStorageInterface filmStorage;
-    private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+    private final FilmStorageInterface filmStorage;
 
     @Autowired
     public FilmDbService(FilmDbStorage filmDbStorage) {
@@ -42,10 +39,13 @@ public class FilmDbService {
         return filmStorage.allFilms();
     }
 
-    public List<Film> getPopularFilm(Long limit) {
-        return filmStorage.getPopularFilm(limit);
+    public List<Film> getMostPopular(Long count, Long genreId, Integer year) {
+        return filmStorage.getMostPopular(count, genreId, year);
     }
 
+    public List<Film> getFilmBySort(Long id, List<String> sortBy) {
+        return filmStorage.getFilmBySort(id, sortBy);
+    }
 
     //update
     public Film updateFilm(Film film) {
@@ -58,12 +58,45 @@ public class FilmDbService {
     }
 
     //delete
-    public void deleteFilmById(Long id) {
-        filmStorage.deleteFilm(id);
-    }
-
     public void deleteLike(Long id, Long userId) {
         filmStorage.deleteLike(id, userId);
+    }
+
+    public List<Film> search(String query, String by) {
+        log.info("Запрос на поиск фильма по названию и/или по режиссёру");
+        if (!by.equals("director") && !by.equals("title")
+                && !by.equals("director,title") && !by.equals("title,director")) {
+            log.error("Параметры запроса переданы неверно");
+            throw new NotFoundException("Параметры запроса переданы неверно");
+        }
+
+        List<Film> filteredFilms;
+        if (by.equals("director")) {
+            log.info("Поиск фильма по режиссёру");
+            filteredFilms = filmStorage.allFilms()
+                    .stream().filter(film -> film.getDirectors().stream()
+                    .anyMatch(director -> director.getName().contains(query))).toList();
+        } else if (by.equals("title")) {
+            log.info("Поиск фильма по названию");
+            filteredFilms = filmStorage.allFilms().stream()
+                    .filter(film -> film.getName().contains(query)).toList();
+        } else {
+            log.info("Поиск фильма по названию и по режиссёру");
+            filteredFilms = filmStorage.allFilms()
+                    .stream().filter(film -> film.getName().contains(query) ||
+                            film.getDirectors().stream()
+                                    .anyMatch(director -> director.getName().contains(query))).toList();
+        }
+        return filteredFilms;
+    }
+
+
+    public void deleteFilmById(Long id) {
+        filmStorage.deleteFilmByID(id);
+    }
+
+    public List<Film> getCommonFilms(long userId, long friendId) {
+        return filmStorage.getCommonFilms(userId, friendId);
     }
 
     private void checkValidation(Film film) {

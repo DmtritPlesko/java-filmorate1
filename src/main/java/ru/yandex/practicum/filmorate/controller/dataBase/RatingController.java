@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.controller.dataBase;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,7 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/mpa")
 public class RatingController {
-    private RatingService ratingService;
+    private final RatingService ratingService;
 
     @Autowired
     public RatingController(RatingService ratingService) {
