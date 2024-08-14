@@ -10,9 +10,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exeption.NotFoundException;
-import ru.yandex.practicum.filmorate.mappers.FeedRowMapper;
 import ru.yandex.practicum.filmorate.mappers.UserRowMapper;
-import ru.yandex.practicum.filmorate.model.Feed;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorageInterface;
 
@@ -148,11 +146,6 @@ public class UserDbStorage implements UserStorageInterface {
                 userRowMapper,
                 userId,
                 friendId));
-    }
-
-    public List<Feed> getFeed(Long userId) {
-        String request = "SELECT * FROM feeds WHERE user_id = ?";
-        return jdbcTemplate.query(request, FeedRowMapper::mapRow, userId);
     }
 
 }

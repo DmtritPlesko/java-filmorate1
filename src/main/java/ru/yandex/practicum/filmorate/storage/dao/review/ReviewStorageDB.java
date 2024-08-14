@@ -30,7 +30,7 @@ public class ReviewStorageDB implements ReviewStorage {
 
         review.setUseful(0L);
 
-        String sqlQuery = "INSERT INTO reviews (content, isPositive, user_id, film_id, useful) " +
+        String sqlQuery = "INSERT INTO reviews (content, is_positive, user_id, film_id, useful) " +
                 "VALUES (?, ?, ?, ?, ?);";
         try {
             KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -60,7 +60,7 @@ public class ReviewStorageDB implements ReviewStorage {
         log.info("Обновление отзыва с id: {}", review.getReviewId());
         getReviewById(review.getReviewId());
 
-        final String sqlQuery = "UPDATE reviews SET content = ?, isPositive = ? WHERE review_id = ?";
+        final String sqlQuery = "UPDATE reviews SET content = ?, is_positive = ? WHERE review_id = ?";
         jdbcTemplate.update(sqlQuery,
                 review.getContent(),
                 review.getIsPositive(),
@@ -116,7 +116,7 @@ public class ReviewStorageDB implements ReviewStorage {
         log.info("Юзер с id: {} добавляет реакцию отзыву с id: {}", userId, reviewId);
         getReviewById(reviewId);
 
-        String sqlQuery = "MERGE INTO review_likes (review_id, user_id, isUseful) VALUES (?, ?, ?)";
+        String sqlQuery = "MERGE INTO review_likes (review_id, user_id, is_useful) VALUES (?, ?, ?)";
         jdbcTemplate.update(sqlQuery, reviewId, userId, isUseful);
         updateReviewUsefulRating(reviewId);
     }
@@ -134,7 +134,7 @@ public class ReviewStorageDB implements ReviewStorage {
 
     private long getReviewUseful(Long reviewId) {
         String sqlQuery = "SELECT SUM(" +
-                "CASE WHEN isUseful = true THEN 1 ELSE -1 END) AS useful FROM review_likes " +
+                "CASE WHEN is_useful = true THEN 1 ELSE -1 END) AS useful FROM review_likes " +
                 "WHERE review_id = ?";
         Long result = jdbcTemplate.queryForObject(sqlQuery, new Object[]{reviewId}, Long.class);
 

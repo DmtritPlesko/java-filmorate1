@@ -43,7 +43,8 @@ public class FilmDbStorage implements FilmStorageInterface {
     public Film addNewFilm(Film film) {
         log.info("Добавление нового фильма в БД");
 
-        final String sqlQuery = "INSERT INTO films (name, description, releaseDate, duration,mpa_id) VALUES (?, ?, ?, ?,?)";
+        final String sqlQuery = "INSERT INTO films (name, description, release_date, duration, mpa_id) " +
+                "VALUES (?, ?, ?, ?,?)";
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
@@ -65,12 +66,12 @@ public class FilmDbStorage implements FilmStorageInterface {
                         "SELECT COUNT(*) FROM genres WHERE genre_id = ?", Integer.class, genre.getId()) > 0;
 
                 if (!exists) {
-                    String insertGenreSql = "INSERT INTO genres (genre_id, name_genres) VALUES (?, ?)";
+                    String insertGenreSql = "INSERT INTO genres (genre_id, genre_name) VALUES (?, ?)";
                     jdbcTemplate.update(insertGenreSql, genre.getId(), genre.getName());
                 }
             }
 
-            String sqlInsertGenre = "INSERT INTO filmgenres (film_id, genre_id) VALUES (?, ?)";
+            String sqlInsertGenre = "INSERT INTO film_genres (film_id, genre_id) VALUES (?, ?)";
             for (Genre genre : film.getGenres()) {
                 jdbcTemplate.update(sqlInsertGenre, film.getId(), genre.getId());
             }
@@ -91,7 +92,7 @@ public class FilmDbStorage implements FilmStorageInterface {
         final String sqlQuery = "UPDATE films SET " +
                 "name = ?, " +
                 "description = ?, " +
-                "releaseDate = ?, " +
+                "release_date = ?, " +
                 "duration = ? " +
                 "WHERE film_id = ?;";
         int temp = jdbcTemplate.update(sqlQuery,
@@ -108,9 +109,11 @@ public class FilmDbStorage implements FilmStorageInterface {
 
     public Film getFilmByID(Long id) {
         log.info("Фильм с id = {} ", id);
-        String sqlQuery = "SELECT f.*, l.user_id, fg.genre_id, g.name_genres AS genre_name, m.mpa_name, d.director_id, dir.director_name FROM films f " +
+        String sqlQuery = "SELECT f.*, l.user_id, fg.genre_id, g.genre_name, m.mpa_name, " +
+                "d.director_id, dir.director_name " +
+                "FROM films f " +
                 "LEFT JOIN likes l ON f.film_id = l.film_id " +
-                "LEFT JOIN filmgenres fg ON f.film_id = fg.film_id " +
+                "LEFT JOIN film_genres fg ON f.film_id = fg.film_id " +
                 "LEFT JOIN genres g ON fg.genre_id = g.genre_id " +
                 "LEFT JOIN mpa m ON f.mpa_id = m.mpa_id " +
                 "LEFT JOIN film_directors d on f.film_id = d.film_id " +
@@ -159,10 +162,10 @@ public class FilmDbStorage implements FilmStorageInterface {
     public List<Film> allFilms() {
         log.debug("Список всех фильмов");
 
-        String sqlQuery = "SELECT f.*, l.user_id, fg.genre_id, g.name_genres AS genre_name, m.mpa_name," +
+        String sqlQuery = "SELECT f.*, l.user_id, fg.genre_id, g.genre_name, m.mpa_name," +
                 "d.director_id, dir.director_name FROM films f " +
                 "LEFT JOIN likes l ON f.film_id = l.film_id " +
-                "LEFT JOIN filmgenres fg ON f.film_id = fg.film_id " +
+                "LEFT JOIN film_genres fg ON f.film_id = fg.film_id " +
                 "LEFT JOIN genres g ON fg.genre_id = g.genre_id " +
                 "LEFT JOIN mpa m ON f.mpa_id = m.mpa_id " +
                 "LEFT JOIN film_directors d on f.film_id = d.film_id " +
@@ -198,6 +201,13 @@ public class FilmDbStorage implements FilmStorageInterface {
     }
 
     @Override
+    public void deleteFilmByID(Long id) {
+        log.info("Удаление фильма с id = {}", id);
+        jdbcTemplate.update("DELETE FROM film_genres WHERE film_id = ?", id);
+        jdbcTemplate.update("DELETE FROM films WHERE film_id = ?", id);
+    }
+
+    @Override
     public void takeLike(Long filmId, Long userId) {
         log.info("Пользователь с id = {} поставил лайк фильму с id = {}", userId, filmId);
         final String sqlQuery = "INSERT INTO likes (film_id,user_id) VALUES (?,?)";
@@ -220,6 +230,7 @@ public class FilmDbStorage implements FilmStorageInterface {
 
     @Override
     public List<Film> getMostPopular(Long count, Long genreId, Integer year) {
+        log.info("Популярные фильмы");
         final String sqlQuery = "SELECT f.*, m.mpa_name, l.user_id, fg.genre_id, g.name_genres AS genre_name, " +
                 "d.director_id, dir.director_name, COUNT(l.user_id) AS like_count " +
                 "FROM films f " +
@@ -292,19 +303,20 @@ public class FilmDbStorage implements FilmStorageInterface {
             return sortByYears(id);
         }
         throw new IllegalArgumentException("Неизвестный метод сортировки");
+
     }
 
     private List<Film> sortByYears(Long id) {
-        String sqlQuery = "SELECT f.*, l.user_id, fg.genre_id, g.name_genres AS genre_name, m.mpa_name," +
+        String sqlQuery = "SELECT f.*, l.user_id, fg.genre_id, g.genre_name, m.mpa_name," +
                 "d.director_id, dir.director_name FROM films f " +
                 "LEFT JOIN likes l ON f.film_id = l.film_id " +
-                "LEFT JOIN filmgenres fg ON f.film_id = fg.film_id " +
+                "LEFT JOIN film_genres fg ON f.film_id = fg.film_id " +
                 "LEFT JOIN genres g ON fg.genre_id = g.genre_id " +
                 "LEFT JOIN mpa m ON f.mpa_id = m.mpa_id " +
                 "LEFT JOIN film_directors d on f.film_id = d.film_id " +
                 "LEFT JOIN directors dir on dir.director_id = d.director_id " +
                 "WHERE d.director_id = ? " +
-                "ORDER BY EXTRACT(YEAR FROM CAST(RELEASEDATE AS DATE))";
+                "ORDER BY EXTRACT(YEAR FROM CAST(release_date AS DATE))";
 
         Map<Long, Film> filmMap = new HashMap<>();
 
@@ -335,10 +347,10 @@ public class FilmDbStorage implements FilmStorageInterface {
     }
 
     private List<Film> sortByLikes(Long id) {
-        String sqlQuery = "SELECT f.*, l.user_id, fg.genre_id, g.name_genres AS genre_name, m.mpa_name," +
+        String sqlQuery = "SELECT f.*, l.user_id, fg.genre_id, g.genre_name, m.mpa_name," +
                 "d.director_id, dir.director_name FROM films f " +
                 "LEFT JOIN likes l ON f.film_id = l.film_id " +
-                "LEFT JOIN filmgenres fg ON f.film_id = fg.film_id " +
+                "LEFT JOIN film_genres fg ON f.film_id = fg.film_id " +
                 "LEFT JOIN genres g ON fg.genre_id = g.genre_id " +
                 "LEFT JOIN mpa m ON f.mpa_id = m.mpa_id " +
                 "LEFT JOIN film_directors d on f.film_id = d.film_id " +
@@ -371,7 +383,6 @@ public class FilmDbStorage implements FilmStorageInterface {
 
             }
         }, id);
-
         return new ArrayList<>(filmMap.values());
     }
 }

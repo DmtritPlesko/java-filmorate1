@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exeption.NotFoundException;
 import ru.yandex.practicum.filmorate.exeption.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorageInterface;
@@ -59,6 +60,39 @@ public class FilmDbService {
     //delete
     public void deleteLike(Long id, Long userId) {
         filmStorage.deleteLike(id, userId);
+    }
+
+    public List<Film> search(String query, String by) {
+        log.info("Запрос на поиск фильма по названию и/или по режиссёру");
+        if (!by.equals("director") && !by.equals("title")
+                && !by.equals("director,title") && !by.equals("title,director")) {
+            log.error("Параметры запроса переданы неверно");
+            throw new NotFoundException("Параметры запроса переданы неверно");
+        }
+
+        List<Film> filteredFilms;
+        if (by.equals("director")) {
+            log.info("Поиск фильма по режиссёру");
+            filteredFilms = filmStorage.allFilms()
+                    .stream().filter(film -> film.getDirectors().stream()
+                    .anyMatch(director -> director.getName().contains(query))).toList();
+        } else if (by.equals("title")) {
+            log.info("Поиск фильма по названию");
+            filteredFilms = filmStorage.allFilms().stream()
+                    .filter(film -> film.getName().contains(query)).toList();
+        } else {
+            log.info("Поиск фильма по названию и по режиссёру");
+            filteredFilms = filmStorage.allFilms()
+                    .stream().filter(film -> film.getName().contains(query) ||
+                            film.getDirectors().stream()
+                                    .anyMatch(director -> director.getName().contains(query))).toList();
+        }
+        return filteredFilms;
+    }
+
+
+    public void deleteFilmById(Long id) {
+        filmStorage.deleteFilmByID(id);
     }
 
     private void checkValidation(Film film) {
