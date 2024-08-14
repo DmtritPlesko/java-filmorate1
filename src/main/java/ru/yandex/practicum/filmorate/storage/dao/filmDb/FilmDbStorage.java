@@ -365,8 +365,8 @@ public class FilmDbStorage implements FilmStorageInterface {
                 "LEFT JOIN film_directors d on f.film_id = d.film_id " +
                 "LEFT JOIN directors dir on dir.director_id = d.director_id " +
                 "WHERE f.film_id IN (SELECT film_id FROM likes " +
-                "WHERE user_id = ? AND (SELECT film_id FROM likes WHERE user_id = ?))" +
-                "LIMIT 1";
+                "WHERE user_id = ? OR user_id = ?)" +
+                "GROUP BY f.film_id, m.mpa_name, l.user_id, fg.genre_id, g.name_genres, d.director_id, dir.director_name";
         return jdbcTemplate.query(request1, new FilmRowMapper(), userId, friendId);
         //
     }
