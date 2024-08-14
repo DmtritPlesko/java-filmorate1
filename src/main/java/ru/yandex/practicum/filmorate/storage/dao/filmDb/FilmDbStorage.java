@@ -384,8 +384,10 @@ public class FilmDbStorage implements FilmStorageInterface {
             }
         }, id);
         return new ArrayList<>(filmMap.values());
+        //
     }
 
+    //общие фильмы
     public List<Film> getCommonFilms(Long userId, Long friendId) {
         String request1 = "SELECT f.*, l.user_id, fg.genre_id, g.genre_name, m.mpa_name, " +
                 "d.director_id, dir.director_name " +
