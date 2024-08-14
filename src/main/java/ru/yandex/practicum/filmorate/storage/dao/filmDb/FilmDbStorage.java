@@ -231,17 +231,17 @@ public class FilmDbStorage implements FilmStorageInterface {
     @Override
     public List<Film> getMostPopular(Long count, Long genreId, Integer year) {
         log.info("Популярные фильмы");
-        final String sqlQuery = "SELECT f.*, m.mpa_name, l.user_id, fg.genre_id, g.name_genres AS genre_name, " +
+        final String sqlQuery = "SELECT f.*, m.mpa_name, l.user_id, fg.genre_id, g.genre_name, " +
                 "d.director_id, dir.director_name, COUNT(l.user_id) AS like_count " +
                 "FROM films f " +
                 "INNER JOIN mpa m ON f.mpa_id = m.mpa_id " +
                 "LEFT JOIN likes l ON f.film_id = l.film_id " +
-                "LEFT JOIN filmgenres fg ON f.film_id = fg.film_id " +
+                "LEFT JOIN film_genres fg ON f.film_id = fg.film_id " +
                 "LEFT JOIN genres g ON fg.genre_id = g.genre_id " +
                 "LEFT JOIN film_directors d on f.film_id = d.film_id " +
                 "LEFT JOIN directors dir on dir.director_id = d.director_id " +
                 "%s " +
-                "GROUP BY f.film_id, m.mpa_name, l.user_id, fg.genre_id, g.name_genres, " +
+                "GROUP BY f.film_id, m.mpa_name, l.user_id, fg.genre_id, g.genre_name, " +
                 "d.director_id, dir.director_name " +
                 "ORDER BY like_count DESC " +
                 "LIMIT ?";
@@ -253,11 +253,11 @@ public class FilmDbStorage implements FilmStorageInterface {
             params.add(genreId);
         }
         if (genreId != null && year != null) {
-            condition = condition + "AND YEAR(f.releaseDate) = ?";
+            condition = condition + "AND YEAR(f.release_date) = ?";
             params.add(year);
         }
         if (genreId == null && year != null) {
-            condition = condition + "WHERE YEAR(f.releaseDate) = ?";
+            condition = condition + "WHERE YEAR(f.release_date) = ?";
             params.add(year);
         }
         params.add(count);

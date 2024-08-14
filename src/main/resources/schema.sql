@@ -1,5 +1,5 @@
 DROP TABLE IF EXISTS genres,mpa,film_directors,directors,
-                     films,filmgenres,likes,status,
+                     films,film_genres,likes,status,
                      friends,review_likes,reviews,feeds,users;
 
 create table if not EXISTS genres (
