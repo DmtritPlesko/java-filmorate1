@@ -22,13 +22,13 @@ import java.util.List;
 public class ReviewController {
     private final ReviewService service;
 
-    @PostMapping
-    public Review create(@RequestBody Review review) {
+    @PostMapping()
+    public Review create(@Valid @RequestBody Review review) {
         return service.create(review);
     }
 
     @PutMapping
-    public Review update(@RequestBody Review review) {
+    public Review update(@Valid @RequestBody Review review) {
         return service.update(review);
     }
 
@@ -72,5 +72,4 @@ public class ReviewController {
                               @PathVariable("userId") Long userId) {
         service.deleteDislike(reviewId, userId);
     }
-
 }

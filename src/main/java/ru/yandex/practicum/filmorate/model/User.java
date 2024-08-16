@@ -1,8 +1,5 @@
 package ru.yandex.practicum.filmorate.model;
 
-
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,7 +21,6 @@ import java.time.LocalDate;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class User {
     @EqualsAndHashCode.Include
-    @PositiveOrZero
     Long id;
 
     String email;
@@ -38,9 +34,4 @@ public class User {
     String password;
 
     LocalDate birthday;
-
-//    Set<Long> friends;
-
-//    Status friend;
-
 }

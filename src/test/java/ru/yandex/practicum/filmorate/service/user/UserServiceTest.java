@@ -9,7 +9,6 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.service.FilmDbService;
 import ru.yandex.practicum.filmorate.service.UserDbService;
 import ru.yandex.practicum.filmorate.storage.dao.filmDb.FilmDbStorage;
 import ru.yandex.practicum.filmorate.storage.dao.userDb.UserDbStorage;
@@ -28,7 +27,6 @@ public class UserServiceTest {
     private final UserDbStorage userDbStorage;
     private final FilmDbStorage filmDbStorage;
     private final UserDbService userDbService;
-    private final FilmDbService filmDbService;
 
 
     @Test
@@ -65,7 +63,7 @@ public class UserServiceTest {
 
         Film filmTwoLikes = new Film("Two likes", "Two likes", LocalDate.now(), 1L, 150L,
                 new HashSet<>(),
-                new HashSet<>(genres), new HashSet<>(), new Mpa(1));
+                new HashSet<>(genres), new HashSet<>(), new Mpa(1L));
 
         long idTwoLikes = filmDbStorage.addNewFilm(filmTwoLikes).getId();
         filmTwoLikes.setId(idTwoLikes);
@@ -74,14 +72,14 @@ public class UserServiceTest {
 
         Film filmOneLike = new Film("One like", "One like", LocalDate.now(), 1L, 150L,
                 new HashSet<>(),
-                new HashSet<>(genres), new HashSet<>(), new Mpa(1));
+                new HashSet<>(genres), new HashSet<>(), new Mpa(1L));
 
         long idOneLike = filmDbStorage.addNewFilm(filmOneLike).getId();
         filmOneLike.setId(idOneLike);
         filmDbStorage.takeLike(idOneLike, twoId);
 
-        assertThat(filmDbService.getRecommendations(oneId)).hasSize(1);
-        assertTrue(filmDbService.getRecommendations(oneId).contains(filmOneLike));
+        assertThat(userDbService.getRecommendations(oneId)).hasSize(1);
+        assertTrue(userDbService.getRecommendations(oneId).contains(filmOneLike));
     }
 
     @Test
@@ -118,7 +116,7 @@ public class UserServiceTest {
 
         Film filmTwoLikes = new Film("Two likes", "Two likes", LocalDate.now(), 1L, 150L,
                 new HashSet<>(),
-                new HashSet<>(genres), new HashSet<>(), new Mpa(1));
+                new HashSet<>(genres), new HashSet<>(), new Mpa(1L));
 
         long idTwoLikes = filmDbStorage.addNewFilm(filmTwoLikes).getId();
         filmTwoLikes.setId(idTwoLikes);
@@ -126,13 +124,13 @@ public class UserServiceTest {
 
         Film filmOneLike = new Film("One like", "One like", LocalDate.now(), 1L, 150L,
                 new HashSet<>(),
-                new HashSet<>(genres), new HashSet<>(), new Mpa(1));
+                new HashSet<>(genres), new HashSet<>(), new Mpa(1L));
 
         long idOneLike = filmDbStorage.addNewFilm(filmOneLike).getId();
         filmOneLike.setId(idOneLike);
         filmDbStorage.takeLike(idOneLike, twoId);
 
-        assertThat(filmDbService.getRecommendations(oneId)).hasSize(0);
-        assertThat(filmDbService.getRecommendations(twoId)).hasSize(0);
+        assertThat(userDbService.getRecommendations(oneId)).hasSize(0);
+        assertThat(userDbService.getRecommendations(twoId)).hasSize(0);
     }
 }
