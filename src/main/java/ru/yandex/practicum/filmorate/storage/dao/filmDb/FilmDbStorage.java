@@ -21,14 +21,7 @@ import ru.yandex.practicum.filmorate.storage.dao.userDb.UserDbStorage;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -472,5 +465,50 @@ public class FilmDbStorage implements FilmStorageInterface {
 
         final String sqlInsert = "INSERT INTO film_directors (film_id, director_id) VALUES (:film_id, :director_id); ";
         jdbc.batchUpdate(sqlInsert, batch);
+    }
+
+    public Collection<Film> getUsersFavouritesFilms(long userId) {
+        log.debug("Список любимых фильмов");
+
+        final String sqlQuery = "SELECT f.*, l.user_id, fg.genre_id, g.genre_name, m.mpa_name," +
+                "d.director_id, dir.director_name FROM films f " +
+                "LEFT JOIN likes l ON f.film_id = l.film_id " +
+                "LEFT JOIN film_genres fg ON f.film_id = fg.film_id " +
+                "LEFT JOIN genres g ON fg.genre_id = g.genre_id " +
+                "LEFT JOIN mpa m ON f.mpa_id = m.mpa_id " +
+                "LEFT JOIN film_directors d on f.film_id = d.film_id " +
+                "LEFT JOIN directors dir on dir.director_id = d.director_id " +
+                "WHERE f.film_id in (SELECT film_id from likes WHERE user_id = ?)";
+
+        Map<Long, Film> filmMap = new HashMap<>();
+
+        jdbcTemplate.query(sqlQuery, rs -> {
+            Long filmId = rs.getLong("film_id");
+            Film film = filmMap.get(filmId);
+            if (film == null) {
+                film = filmRowMapper.mapRow(rs, rs.getRow());
+                filmMap.put(filmId, film);
+            }
+            // Добавляем лайки и жанры
+            if (rs.getLong("user_id") != 0) {
+                film.getLikes().add(rs.getLong("user_id"));
+            }
+            if (rs.getLong("genre_id") != 0) {
+                Genre genre = new Genre(rs.getLong("genre_id"), rs.getString("genre_name"));
+                film.getGenres().add(genre);
+                film.setGenres(film.getGenres().stream()
+                        .sorted(Comparator.comparing(Genre::getId))
+                        .collect(Collectors.toCollection(LinkedHashSet::new)));
+            }
+            if (rs.getLong("director_id") != 0) {
+                Director director = new Director(
+                        rs.getLong("director_id"),
+                        rs.getString("director_name"));
+                film.getDirectors().add(director);
+
+            }
+        }, userId);
+
+        return new HashSet<>(filmMap.values());
     }
 }

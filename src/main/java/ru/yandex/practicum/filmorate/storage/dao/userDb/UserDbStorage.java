@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
@@ -30,6 +31,7 @@ import java.util.Set;
 public class UserDbStorage implements UserStorageInterface {
     private final JdbcTemplate jdbcTemplate;
     private final UserRowMapper userRowMapper;
+    private final NamedParameterJdbcOperations jdbc;
 
     @Override
     public User createUser(User user) {
@@ -54,7 +56,6 @@ public class UserDbStorage implements UserStorageInterface {
         user.setId(generatedKey.longValue());
         return user;
     }
-
 
     @Override
     public User update(User user) {
@@ -161,7 +162,7 @@ public class UserDbStorage implements UserStorageInterface {
         log.info("Запрос на получение ленты событий пользователя с id = {}", userId);
 
         final String request = "SELECT * FROM feeds WHERE user_id = ?";
-        return jdbcTemplate.query(request, FeedRowMapper::mapRow, userId);
+        return jdbcTemplate.query(request, new FeedRowMapper(), userId);
     }
 
     public void validUser(long id) {

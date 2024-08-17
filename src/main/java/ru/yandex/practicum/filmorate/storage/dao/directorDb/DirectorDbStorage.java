@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.dao.directorDb;
 
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -17,7 +16,6 @@ import java.sql.Statement;
 import java.util.List;
 
 @Slf4j
-@Setter
 @Component
 @RequiredArgsConstructor
 public class DirectorDbStorage implements DirectorDb {
@@ -26,7 +24,7 @@ public class DirectorDbStorage implements DirectorDb {
 
     @Override
     public List<Director> allDirectors() {
-        return jdbcTemplate.query("SELECT * FROM directors", DirectorMapper::mapRow);
+        return jdbcTemplate.query("SELECT * FROM directors", new DirectorMapper());
     }
 
     @Override
@@ -52,7 +50,7 @@ public class DirectorDbStorage implements DirectorDb {
             return jdbcTemplate.queryForObject("SELECT * " +
                             "FROM directors " +
                             "WHERE director_id = ?",
-                    DirectorMapper::mapRow, id);
+                    new DirectorMapper(), id);
         } catch (DataRetrievalFailureException e) {
             log.error("Директор с id = {} не найден", id);
             throw new NotFoundException("Директор с id = " + id + " не найден");

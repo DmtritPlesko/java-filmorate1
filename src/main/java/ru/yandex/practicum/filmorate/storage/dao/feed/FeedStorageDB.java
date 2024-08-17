@@ -57,7 +57,7 @@ public class FeedStorageDB implements FeedStorage {
         log.info("Fetching feed for user with id {}", userId);
 
         final String sqlQuery = "SELECT * FROM feeds WHERE user_id = ?";
-        List<Feed> feed = jdbcTemplate.query(sqlQuery, FeedRowMapper::mapRow, userId);
+        List<Feed> feed = jdbcTemplate.query(sqlQuery, new FeedRowMapper(), userId);
 
         log.info("Fetched {} events", feed.size());
         return feed;
